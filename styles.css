@@ -5,16 +5,12 @@
     font-style: normal;
 }
 
-#timer {
-  font-size: 8em;
-  color: #f1e170;
-}
+
 body {
   text-align: center;
   color: white;
   font-family: "Montserrat";
-  
-  background-image: linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,.5)), url('https://images.unsplash.com/photo-1544885935-98dd03b09034?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+  background-image: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)), url('https://images.unsplash.com/photo-1639266776002-a0c991bc26cf?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
   /* Make the background image cover the entire viewport */
   background-size: cover;
 
@@ -22,6 +18,10 @@ body {
   background-position: center center;
 }
 
+#timer {
+  font-size: 8em;
+  color: rgb(177, 111, 11);
+}
 .control-buttons button {
   background: rgba(255, 255, 255, 0);
   color: #fafafa;
@@ -54,4 +54,9 @@ body {
   text-align: center;
   font-size: 18px;
   padding: 3rem 0;
+}
+a:link {
+  color: greenyellow;
+  background-color: transparent;
+  text-decoration: none;
 }
