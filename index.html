@@ -1,198 +1,295 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Maticha</title>
-  <style>
-    #timer{
-      font-size: 8em;
-      color:#f1e170;
-    }    
-    body {
-      text-align: center;
-      color: white;
-      background-color: black;
-      font-family: monospace;
-    }
+  <head>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Maticha</title>
 
-    .control-buttons button {
-      background: rgba(255, 255, 255,0);
-      color: #fafafa;
-      border:salmon solid 2px;
-      padding: 10px 20px;
-      border-radius: 1px;
-      border-color: salmon;
-      cursor: pointer;
-      margin: auto;
-    }
+  </head>
+  <body>
+    <h1 class="tracker_id">Maticha tracker 🍅</h1>
+    <h2 class="tracker_sup">Stoic edition</h2>
+    <div class="timer-div">
+      <p id="timer">25:00</p>
+    </div>
 
-    .control-buttons button:hover {
-      background-color: #a30796;
-    }
-    .tracker_id {
-      color: white;
-    }
-    .tracker_sup{
-      font-size: small;
-      font-style: italic;
-    }
-    .timer-div {
-      margin: auto;
-            text-align: center;
-            font-size: 12px;
-    }
-    .quote-container {
-            width: 50%;
-            margin: auto;
-            text-align: center;
-            font-size: 18px;
-            padding: 3rem 0;
-        }
-  </style>
-</head>
-<body>
-  <h1 class="tracker_id">Maticha tracker 🍅</h1>
-  <h2 class="tracker_sup"> Stoic edition</h2>
-  <div class="timer-div">
-    <p id="timer">25:00</p>
-  </div>
-  
-  <div class="control-buttons">
-    <button onclick="startTimer()">Start</button>
-    <button onclick="stopTimer()">Stop</button>
-  </div>
-  <script>
-    let timeLeft = 1500; // 25 minutes in seconds
-    let timerInterval;
+    <div class="control-buttons">
+      <button onclick="startTimer()">Start</button>
+      <button onclick="stopTimer()">Stop</button>
+    </div>
+    <script src="./script.js"></script>
+    <div class="quote-container"></div>
 
-    function startTimer() {
-      timerInterval = setInterval(updateTimer, 1000);
-    }
-
-    function stopTimer() {
-      clearInterval(timerInterval);
-      timeLeft =1500;
-      updateTimer()
-    }
-
-    function updateTimer() {
-      const minutes = Math.floor(timeLeft / 60);
-      let seconds = timeLeft % 60;
-      seconds = seconds < 10 ? '0' + seconds : seconds;
-      document.getElementById('timer').textContent = `${minutes}:${seconds}`;
-      
-      if (timeLeft === 0) {
-        stopTimer();
-
-      } else {
-        timeLeft--;
-      }
-    }
-  </script>
-  <div class="quote-container"></div>
-    
-  <script>
+    <script>
       const quoteContainer = document.querySelector(".quote-container");
 
       const quotes = {
         stoicQuotes: [
-{"author": "Epictetus", "quote": "Don't explain your philosophy. Embody it."},
-{"author": "Epictetus", "quote": "Make the best use of what is in your power, and take the rest as it happens."},
-{"author": "Epictetus", "quote": "No great thing is created suddenly."},
-{"author": "Epictetus", "quote": "The key is to keep company only with people who uplift you, whose presence calls forth your best."},
-{"author": "Epictetus", "quote": "The greater the difficulty, the greater the glory."},
-{"author": "Epictetus", "quote": "Only the educated are free."},
-{"author": "Epictetus", "quote": "It's not reality that causes trouble, it's your reactions to reality."},
-{"author": "Epictetus", "quote": "Seek not after pleasure for her own sake, but learn to love whatever chooses to come."},
-{"author": "Epictetus", "quote": "Nature hath given men one tongue but two ears, that we may hear from others twice as much as we speak."},
-{"author": "Epictetus", "quote": "Know, first, who you are, and then adorn yourself accordingly."},
-{"author": "Epictetus", "quote": "He is a wise man who does not grieve for the things which he has not, but rejoices for those which he has."},
-{"author": "Epictetus", "quote": "Men are not disturbed by things, but by the views which they take of them."},
-{"author": "Epictetus", "quote": "Silence is safer than speech."},
-{"author": "Epictetus", "quote": "Cultivation of simplicity involves elimination of waste."},
-{"author": "Epictetus", "quote": "Wealth consists not in having great possessions, but in having few wants."},
-{"author": "Epictetus", "quote": "To accuse others for one's own misfortune is a sign of want of education. To accuse oneself shows that one's education has begun. To accuse neither oneself nor others shows that one's education is complete."},
-{"author": "Epictetus", "quote": "Attitude is a choice. Happiness is a choice. Optimism is a choice. Kindness is a choice. Giving is a choice. Respect is a choice. Whatever choice you make makes you. Choose wisely."},
-{"author": "Epictetus", "quote": "If you wish to be a writer, write."},
-{"author": "Epictetus", "quote": "Learn to be indifferent to what makes no difference."},
-{"author": "Epictetus", "quote": "If anyone tells you that a certain person speaks ill of you, do not make excuses about what is said of you but answer, 'He was ignorant of my other faults, else he would not have mentioned these alone.'"},
-{"author": "Seneca", "quote": "Difficult times often bring out the best in people."},
-{"author": "Seneca", "quote": "True happiness is... to enjoy the present, without anxious dependence upon the future."},
-{"author": "Seneca", "quote": "We should every night call ourselves to an account: What infirmity have I mastered today? What passions opposed? What temptation resisted? What virtue acquired?"},
-{"author": "Seneca", "quote": "Life is long if you know how to use it."},
-{"author": "Seneca", "quote": "The whole future lies in uncertainty: live immediately."},
-{"author": "Seneca", "quote": "Leisure without literature is death, and literature without leisure is slavery."},
-{"author": "Seneca", "quote": "Associate with people who are likely to improve you."},
-{"author": "Seneca", "quote": "As long as you live, keep learning how to live."},
-{"author": "Seneca", "quote": "What progress, you ask, have I made? I have begun to be a friend to myself."},
-{"author": "Seneca", "quote": "Time discovers truth."},
-{"author": "Seneca", "quote": "Wisdom does not show itself so much in precept as in life."},
-{"author": "Seneca", "quote": "Believe me, prosperity is nothing but a lavish feast at which Fortune sets herself before us to gorge us until she fattens us for the slaughter."},
-{"author": "Seneca", "quote": "Religion is regarded by the common people as true, by the wise as false, and by the rulers as useful."},
-{"author": "Seneca", "quote": "Nothing is ours, except time."},
-{"author": "Seneca", "quote": "We suffer more often in imagination than in reality."},
-{"author": "Seneca", "quote": "Every new beginning comes from some other beginning's end."},
-{"author": "Seneca", "quote": "Riches do not exhilarate us so much with their possession as they torment us with their loss."},
-{"author": "Seneca", "quote": "We should always allow some time to elapse, for time discloses the truth."},
-{"author": "Seneca", "quote": "Virtue is nothing else than right reason."},
-{"author": "Marcus Aurelius", "quote": "Dwell on the beauty of life. Watch the stars, and see yourself running with them."},
-{"author": "Marcus Aurelius", "quote": "How much more grievous are the consequences of anger than the causes of it."},
-{"author": "Marcus Aurelius", "quote": "Never let the future disturb you. You will meet it, if you have to, with the same weapons of reason which today arm you against the present."},
-{"author": "Marcus Aurelius", "quote": "Accept the things to which fate binds you, and love the people with whom fate brings you together, but do so with all your heart."},
-{"author": "Marcus Aurelius", "quote": "Reject your sense of injury and the injury itself disappears."},
-{"author": "Marcus Aurelius", "quote": "Be tolerant with others and strict with yourself."},
-{"author": "Marcus Aurelius", "quote": "Death smiles at us all, but all a man can do is smile back."},
-{"author": "Marcus Aurelius", "quote": "The object of life is not to be on the side of the majority, but to escape finding oneself in the ranks of the insane."},
-{"author": "Marcus Aurelius", "quote": "Look well into thyself; there is a source of strength which will always spring up if thou wilt always look."},
-{"author": "Marcus Aurelius", "quote": "When you arise in the morning, think of what a precious privilege it is to be alive . to breathe, to think, to enjoy, to love."},
-{"author": "Marcus Aurelius", "quote": "Perfection of character is this: to live each day as if it were your last, without frenzy, without apathy, without pretense."},
-{"author": "Marcus Aurelius", "quote": "Our actions may be impeded…but there can be no impeding our intentions or dispositions. Because we can accommodate and adapt. The mind adapts and converts to its own purposes the obstacle to our acting. The impediment to action advances action. What stands in the way becomes the way."},
-{"author": "Marcus Aurelius", "quote": "Begin each day by telling yourself: Today I shall be meeting with interference, ingratitude, insolence, disloyalty, ill-will, and selfishness. All of them due to the offenders ignorance of what is good or evil."},
-{"author": "Marcus Aurelius", "quote": "The universe is transformation; our life is what our thoughts make it."},
-{"author": "Marcus Aurelius", "quote": "Do every act of your life as if it were your last."},
-{"author": "Marcus Aurelius", "quote": "The best way out is always through."},
-{"author": "Marcus Aurelius", "quote": "Adapt yourself to the things among which your lot has been cast and love sincerely the fellow creatures with whom destiny has ordained that you shall live."},
-{"author": "David Goggins", "quote": "It's so hard to understand unless you've lived it, but pain changes you."},
-{"author": "David Goggins", "quote": "Obstacles are opportunities for growth."},
-{"author": "David Goggins", "quote": "Most people who fail in life, fail not from lack of ability but from lack of motivation."},
-{"author": "David Goggins", "quote": "In order to become the best version of yourself, you have to expose yourself to many elements that challenge your identity."},
-{"author": "David Goggins", "quote": "Self-talk and visualization are the biggest components to changing your life."},
-{"author": "David Goggins", "quote": "Life is one big tug of war between mediocrity and trying to find your inner greatness."},
-{"author": "David Goggins", "quote": "We are all great. No matter if you think you're dumb, fat, been bullied, we all have greatness. You gotta find the courage. It's going to be deep, deep, deep inside."},
-{"author": "David Goggins", "quote": "Denial is the ultimate comfort zone."},
-{"author": "David Goggins", "quote": "Start where you are. Use what you have. Do what you can."},
-{"author": "David Goggins", "quote": "Your pain is directly proportional to your purpose."},
-{"author": "David Goggins", "quote": "Always be willing to embrace ignorance, and understand it's okay to not know everything."},
-{"author": "David Goggins", "quote": "The only excuse you ever have to give up is dead on arrival."},
-{"author": "David Goggins", "quote": "Greatness is a result of one word: effort."},
-{"author": "David Goggins", "quote": "The more you practice getting uncomfortable, the better you get at handling discomfort."},
-{"author": "David Goggins", "quote": "Goals are just dreams with deadlines."},
-{"author": "David Goggins", "quote": "The worst thing that could ever happen to you is you die while reading a book."},
-{"author": "David Goggins", "quote": "Success is based on your willingness to work your ass off no matter what obstacles stand in your way."},
-{"author": "David Goggins", "quote": "We have the ability to control situations and outcomes, but we rarely realize it."},
-{"author": "David Goggins", "quote": "People who reach the highest level of success aren't afraid to look bad, aren't afraid to fail, and aren't afraid to be embarrassed."},
-{"author": "David Goggins", "quote": "Stop making excuses for why you can't succeed and start focusing on all the reasons why you must"}
-]
+          {
+            author: "Epictetus",
+            quote: "Don't explain your philosophy. Embody it.",
+          },
+          {
+            author: "Epictetus",
+            quote:
+              "Make the best use of what is in your power, and take the rest as it happens.",
+          },
+          { author: "Epictetus", quote: "No great thing is created suddenly." },
+          {
+            author: "Epictetus",
+            quote:
+              "The key is to keep company only with people who uplift you, whose presence calls forth your best.",
+          },
+          {
+            author: "Epictetus",
+            quote: "The greater the difficulty, the greater the glory.",
+          },
+          { author: "Epictetus", quote: "Only the educated are free." },
+          {
+            author: "Epictetus",
+            quote:
+              "It's not reality that causes trouble, it's your reactions to reality.",
+          },
+          {
+            author: "Epictetus",
+            quote:
+              "Seek not after pleasure for her own sake, but learn to love whatever chooses to come.",
+          },
+          {
+            author: "Epictetus",
+            quote:
+              "Nature hath given men one tongue but two ears, that we may hear from others twice as much as we speak.",
+          },
+          {
+            author: "Epictetus",
+            quote:
+              "Know, first, who you are, and then adorn yourself accordingly.",
+          },
+          {
+            author: "Epictetus",
+            quote:
+              "He is a wise man who does not grieve for the things which he has not, but rejoices for those which he has.",
+          },
+          {
+            author: "Epictetus",
+            quote:
+              "Men are not disturbed by things, but by the views which they take of them.",
+          },
+          { author: "Epictetus", quote: "Silence is safer than speech." },
+          {
+            author: "Epictetus",
+            quote: "Cultivation of simplicity involves elimination of waste.",
+          },
+          {
+            author: "Epictetus",
+            quote:
+              "Wealth consists not in having great possessions, but in having few wants.",
+          },
+          {
+            author: "Epictetus",
+            quote:
+              "To accuse others for one's own misfortune is a sign of want of education. To accuse oneself shows that one's education has begun. To accuse neither oneself nor others shows that one's education is complete.",
+          },
+          {
+            author: "Epictetus",
+            quote:
+              "Attitude is a choice. Happiness is a choice. Optimism is a choice. Kindness is a choice. Giving is a choice. Respect is a choice. Whatever choice you make makes you. Choose wisely.",
+          },
+          { author: "Epictetus", quote: "If you wish to be a writer, write." },
+          {
+            author: "Epictetus",
+            quote: "Learn to be indifferent to what makes no difference.",
+          },
+          {
+            author: "Epictetus",
+            quote:
+              "If anyone tells you that a certain person speaks ill of you, do not make excuses about what is said of you but answer, 'He was ignorant of my other faults, else he would not have mentioned these alone.'",
+          },
+          {
+            author: "Seneca",
+            quote: "Difficult times often bring out the best in people.",
+          },
+          {
+            author: "Seneca",
+            quote:
+              "True happiness is... to enjoy the present, without anxious dependence upon the future.",
+          },
+          {
+            author: "Seneca",
+            quote:
+              "We should every night call ourselves to an account: What infirmity have I mastered today? What passions opposed? What temptation resisted? What virtue acquired?",
+          },
+          {
+            author: "Seneca",
+            quote: "Life is long if you know how to use it.",
+          },
+          {
+            author: "Seneca",
+            quote: "The whole future lies in uncertainty: live immediately.",
+          },
+          {
+            author: "Seneca",
+            quote:
+              "Leisure without literature is death, and literature without leisure is slavery.",
+          },
+          {
+            author: "Seneca",
+            quote: "Associate with people who are likely to improve you.",
+          },
+          {
+            author: "Seneca",
+            quote: "As long as you live, keep learning how to live.",
+          },
+          {
+            author: "Seneca",
+            quote:
+              "What progress, you ask, have I made? I have begun to be a friend to myself.",
+          },
+          { author: "Seneca", quote: "Time discovers truth." },
+          {
+            author: "Seneca",
+            quote: "Wisdom does not show itself so much in precept as in life.",
+          },
+          {
+            author: "Seneca",
+            quote:
+              "Believe me, prosperity is nothing but a lavish feast at which Fortune sets herself before us to gorge us until she fattens us for the slaughter.",
+          },
+          {
+            author: "Seneca",
+            quote:
+              "Religion is regarded by the common people as true, by the wise as false, and by the rulers as useful.",
+          },
+          { author: "Seneca", quote: "Nothing is ours, except time." },
+          {
+            author: "Seneca",
+            quote: "We suffer more often in imagination than in reality.",
+          },
+          {
+            author: "Seneca",
+            quote: "Every new beginning comes from some other beginning's end.",
+          },
+          {
+            author: "Seneca",
+            quote:
+              "Riches do not exhilarate us so much with their possession as they torment us with their loss.",
+          },
+          {
+            author: "Seneca",
+            quote:
+              "We should always allow some time to elapse, for time discloses the truth.",
+          },
+          {
+            author: "Seneca",
+            quote: "Virtue is nothing else than right reason.",
+          },
+          {
+            author: "Marcus Aurelius",
+            quote:
+              "Dwell on the beauty of life. Watch the stars, and see yourself running with them.",
+          },
+          {
+            author: "Marcus Aurelius",
+            quote:
+              "How much more grievous are the consequences of anger than the causes of it.",
+          },
+          {
+            author: "Marcus Aurelius",
+            quote:
+              "Never let the future disturb you. You will meet it, if you have to, with the same weapons of reason which today arm you against the present.",
+          },
+          {
+            author: "Marcus Aurelius",
+            quote:
+              "Accept the things to which fate binds you, and love the people with whom fate brings you together, but do so with all your heart.",
+          },
+          {
+            author: "Marcus Aurelius",
+            quote:
+              "Reject your sense of injury and the injury itself disappears.",
+          },
+          {
+            author: "Marcus Aurelius",
+            quote: "Be tolerant with others and strict with yourself.",
+          },
+          {
+            author: "Marcus Aurelius",
+            quote:
+              "Death smiles at us all, but all a man can do is smile back.",
+          },
+          {
+            author: "Marcus Aurelius",
+            quote:
+              "The object of life is not to be on the side of the majority, but to escape finding oneself in the ranks of the insane.",
+          },
+          {
+            author: "Marcus Aurelius",
+            quote:
+              "Look well into thyself; there is a source of strength which will always spring up if thou wilt always look.",
+          },
+          {
+            author: "Marcus Aurelius",
+            quote:
+              "When you arise in the morning, think of what a precious privilege it is to be alive . to breathe, to think, to enjoy, to love.",
+          },
+          {
+            author: "Marcus Aurelius",
+            quote:
+              "Perfection of character is this: to live each day as if it were your last, without frenzy, without apathy, without pretense.",
+          },
+          {
+            author: "Marcus Aurelius",
+            quote:
+              "Our actions may be impeded…but there can be no impeding our intentions or dispositions. Because we can accommodate and adapt. The mind adapts and converts to its own purposes the obstacle to our acting. The impediment to action advances action. What stands in the way becomes the way.",
+          },
+          {
+            author: "Marcus Aurelius",
+            quote:
+              "Begin each day by telling yourself: Today I shall be meeting with interference, ingratitude, insolence, disloyalty, ill-will, and selfishness. All of them due to the offenders ignorance of what is good or evil.",
+          },
+          {
+            author: "Marcus Aurelius",
+            quote:
+              "The universe is transformation; our life is what our thoughts make it.",
+          },
+          {
+            author: "Marcus Aurelius",
+            quote: "Do every act of your life as if it were your last.",
+          },
+          {
+            author: "Marcus Aurelius",
+            quote: "The best way out is always through.",
+          },
+          {
+            author: "Marcus Aurelius",
+            quote:
+              "Adapt yourself to the things among which your lot has been cast and love sincerely the fellow creatures with whom destiny has ordained that you shall live.",
+          },
+        ],
       };
 
       let quoteIndex = 0;
 
       function showNextQuote() {
-          if (quoteIndex >= quotes.stoicQuotes.length) {
-              quoteIndex = 0;
-          }
+        if (quoteIndex >= quotes.stoicQuotes.length) {
+          quoteIndex = 0;
+        }
 
-          const currentQuote = quotes.stoicQuotes[quoteIndex];
-          quoteContainer.innerText = `"${currentQuote.quote}"\n\n~ ${currentQuote.author}`;
-          quoteIndex++;
+        const currentQuote = quotes.stoicQuotes[quoteIndex];
+        quoteContainer.innerText = `"${currentQuote.quote}"\n\n~ ${currentQuote.author}`;
+        quoteIndex++;
       }
 
       setInterval(showNextQuote, 180 * 1000); // Change quote every 12 minutes (720 seconds)
       showNextQuote(); // Display initial quote
-  </script>
-  <div>
-    <p>Memento Mori</p>
-  </div>
-</body>
+    </script>
+    <div>
+      <p>Memento Mori</p>
+    </div>
+    <footer>
+      <h6>Photo de <a href="https://unsplash.com/fr/@derchlee?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Derch</a> sur <a href="https://unsplash.com/fr/photos/vehicules-sur-la-chaussee-entre-les-batiments-eclaires-la-nuit-4CMq1GxDSPA?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>
+      </h6>
+    </footer>
+  </body>
 </html>

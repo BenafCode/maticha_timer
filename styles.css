@@ -1,0 +1,57 @@
+@font-face {
+    font-family: "Montserrat";
+    src: url('fonts/Montserrat-Regular.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+#timer {
+  font-size: 8em;
+  color: #f1e170;
+}
+body {
+  text-align: center;
+  color: white;
+  font-family: "Montserrat";
+  
+  background-image: linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,.5)), url('https://images.unsplash.com/photo-1544885935-98dd03b09034?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+  /* Make the background image cover the entire viewport */
+  background-size: cover;
+
+  /* Center the background image horizontally and vertically */
+  background-position: center center;
+}
+
+.control-buttons button {
+  background: rgba(255, 255, 255, 0);
+  color: #fafafa;
+  border: salmon solid 2px;
+  padding: 10px 20px;
+  border-radius: 1px;
+  border-color: salmon;
+  cursor: pointer;
+  margin: auto;
+}
+
+.control-buttons button:hover {
+  background-color: #a30796;
+}
+.tracker_id {
+  color: white;
+}
+.tracker_sup {
+  font-size: small;
+  font-style: italic;
+}
+.timer-div {
+  margin: auto;
+  text-align: center;
+  font-size: 12px;
+}
+.quote-container {
+  width: 50%;
+  margin: auto;
+  text-align: center;
+  font-size: 18px;
+  padding: 3rem 0;
+}
