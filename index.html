@@ -4,31 +4,37 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Maticha</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="styles.css" />
   </head>
   <body>
-    <h1 class="tracker_id">Maticha timer</h1>
-    <h2 class="tracker_sup">Stoic edition</h2>
+    <div class="app-card">
+      <div class="card-header">
+        <h1 class="tracker_id">Maticha</h1>
+        <p class="tracker_sup">Stoic edition</p>
+      </div>
 
-    <div class="timer-div">
-      <p id="timer">25:00</p>
-    </div>
+      <div class="timer-div">
+        <p id="timer">25:00</p>
+      </div>
 
-    <div class="control-buttons">
-      <button id="toggle-btn" onclick="toggleTimer()" aria-label="Start or pause the timer">Start</button>
-      <button onclick="resetTimer()" aria-label="Reset the timer to 25 minutes">Reset</button>
+      <div class="control-buttons">
+        <button id="toggle-btn" class="btn-primary" onclick="toggleTimer()" aria-label="Start or pause the timer">Start</button>
+        <button class="btn-outline" onclick="resetTimer()" aria-label="Reset the timer to 25 minutes">Reset</button>
+      </div>
     </div>
 
     <div class="quote-container"></div>
 
-    <div class="memento">
-      <p>Memento Mori</p>
-    </div>
+    <div class="memento">Memento Mori</div>
 
     <footer>
-      <h6>
-        Photo by <a href="https://unsplash.com/fr/@pixel_goods?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Ally Griffin</a> on <a href="https://unsplash.com/fr/photos/un-crane-avec-des-fleurs-dans-la-bouche-sur-fond-noir-hdWXQGLM7ps?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>
-      </h6>
+      <p>
+        Photo by <a href="https://unsplash.com/fr/@pixel_goods?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Ally Griffin</a>
+        on <a href="https://unsplash.com/fr/photos/un-crane-avec-des-fleurs-dans-la-bouche-sur-fond-noir-hdWXQGLM7ps?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>
+      </p>
     </footer>
 
     <script src="./script.js"></script>
