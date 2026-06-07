@@ -1,62 +1,196 @@
-@font-face {
-    font-family: "Montserrat";
-    src: url('fonts/Montserrat-Regular.ttf') format('truetype');
-    font-weight: 700;
-    font-style: normal;
+/* shadcn-inspired design tokens */
+:root {
+  --foreground:        hsl(0 0% 98%);
+  --muted:             hsl(240 3.7% 15.9%);
+  --muted-foreground:  hsl(240 5% 64.9%);
+  --border:            hsl(240 3.7% 20%);
+  --card-bg:           hsl(240 10% 6% / 0.65);
+  --accent-timer:      hsl(38 85% 52%);
+  --radius:            0.5rem;
 }
 
+/* ─── Reset & base ─────────────────────────────────────────────────── */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 body {
-  text-align: center;
-  color: white;
-  font-family: "Montserrat";
-  background-image: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)), url('https://images.unsplash.com/photo-1639266776002-a0c991bc26cf?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
-  /* Make the background image cover the entire viewport */
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  font-size: 16px;
+  color: var(--foreground);
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.62)),
+    url('https://images.unsplash.com/photo-1639266776002-a0c991bc26cf?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
   background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 1rem 2rem;
+}
 
-  /* Center the background image horizontally and vertically */
-  background-position: center center;
+/* ─── Card ──────────────────────────────────────────────────────────── */
+
+.app-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) * 2);
+  padding: 2.5rem 3rem 2rem;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.card-header {
+  margin-bottom: 1.5rem;
+}
+
+.tracker_id {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--foreground);
+}
+
+.tracker_sup {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--muted-foreground);
+  letter-spacing: 0.04em;
+  margin-top: 0.2rem;
+}
+
+/* ─── Timer ─────────────────────────────────────────────────────────── */
+
+.timer-div {
+  margin-bottom: 2rem;
 }
 
 #timer {
-  font-size: 8em;
-  color: rgb(177, 111, 11);
-}
-.control-buttons button {
-  background: rgba(255, 255, 255, 0);
-  color: #fafafa;
-  border: salmon solid 2px;
-  padding: 10px 20px;
-  border-radius: 1px;
-  border-color: salmon;
-  cursor: pointer;
-  margin: auto;
+  font-size: 5.5rem;
+  font-weight: 600;
+  color: var(--accent-timer);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 
-.control-buttons button:hover {
-  background-color: #a30796;
+/* ─── Buttons ───────────────────────────────────────────────────────── */
+
+.control-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
 }
-.tracker_id {
-  color: white;
+
+.control-buttons button {
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.5rem 1.75rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background-color 0.15s, opacity 0.15s;
+  letter-spacing: 0.02em;
 }
-.tracker_sup {
-  font-size: small;
+
+.btn-primary {
+  background: var(--foreground);
+  color: hsl(240 5.9% 10%);
+  border: 1px solid transparent;
+}
+
+.btn-primary:hover {
+  opacity: 0.88;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--border);
+}
+
+.btn-outline:hover {
+  background: var(--muted);
+}
+
+/* ─── Quote ─────────────────────────────────────────────────────────── */
+
+.quote-container {
+  width: min(52%, 640px);
+  text-align: center;
+  padding: 2.5rem 0;
+  flex-shrink: 0;
+}
+
+.quote-text {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--foreground);
+  margin-bottom: 0.75rem;
+}
+
+.quote-author {
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
   font-style: italic;
 }
-.timer-div {
-  margin: auto;
-  text-align: center;
-  font-size: 12px;
+
+/* ─── Memento Mori ──────────────────────────────────────────────────── */
+
+.memento {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  margin-top: auto;
+  padding-top: 2rem;
 }
-.quote-container {
-  width: 50%;
-  margin: auto;
-  text-align: center;
-  font-size: 18px;
-  padding: 3rem 0;
+
+/* ─── Footer ────────────────────────────────────────────────────────── */
+
+footer {
+  margin-top: 0.75rem;
+  padding-bottom: 1rem;
 }
-a:link {
-  color: greenyellow;
-  background-color: transparent;
-  text-decoration: none;
+
+footer p {
+  font-size: 0.7rem;
+  color: var(--muted-foreground);
+}
+
+a {
+  color: var(--muted-foreground);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+
+a:hover {
+  color: var(--foreground);
+}
+
+/* ─── Mobile ────────────────────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .app-card {
+    padding: 2rem 1.5rem 1.5rem;
+  }
+
+  #timer {
+    font-size: 4rem;
+  }
+
+  .quote-container {
+    width: 92%;
+  }
 }
