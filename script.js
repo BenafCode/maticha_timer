@@ -3,7 +3,6 @@
    ============================================================ */
 
 const STORE = 'ma_timer_v1';
-const RING_C = 289.027; // 2 * Math.PI * 46
 
 const MODES = {
   focus: { label: 'Focus',       phrase: 'one breath of work', tint: '#bd4a2c' },
@@ -110,8 +109,7 @@ function saveState() {
 
 // ─── DOM refs ─────────────────────────────────────────────────
 const timerDisplay = document.getElementById('timer-display');
-const ringProg     = document.getElementById('ring-prog');
-const disc         = document.getElementById('disc');
+const progressFill = document.getElementById('progress-fill');
 const phaseText    = document.getElementById('phase-text');
 const toggleBtn    = document.getElementById('toggle-btn');
 const resetBtn     = document.getElementById('reset-btn');
@@ -140,13 +138,11 @@ function render() {
   timerDisplay.innerHTML = str.split('').map(ch =>
     ch === ':' ? `<span class="c">:</span>` : `<span class="d">${ch}</span>`
   ).join('');
+  timerDisplay.classList.toggle('running', !!tickInterval);
 
-  // Ring progress
-  ringProg.setAttribute('stroke-dashoffset', RING_C * (1 - progress));
-  ringProg.setAttribute('stroke', M.tint);
-
-  // Disc accent color (drives ::before halftone + ::after ring via currentColor)
-  disc.style.color = M.tint;
+  // Hairline progress bar
+  progressFill.style.width = (progress * 100) + '%';
+  progressFill.style.backgroundColor = M.tint;
 
   // Phase line
   phaseText.textContent = running ? M.phrase : `${M.label} — ${durations[mode]} min`;
