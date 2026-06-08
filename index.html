@@ -1,42 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Maticha</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" type="text/css" href="styles.css" />
-  </head>
-  <body>
-    <div class="app-card">
-      <div class="card-header">
-        <h1 class="tracker_id">Maticha</h1>
-        <p class="tracker_sup">Stoic edition</p>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MA · 間 — Maticha</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="grain">
+  <div class="app">
+    <div class="board">
+
+      <div class="top">
+        <div class="brand">
+          <span class="mark">MA</span>
+          <span class="kanji">間</span>
+          <span class="tag">the art of the interval</span>
+        </div>
+        <div class="top-right">
+          <div class="streak">
+            <div class="n" id="streak-count">0</div>
+            <div class="l">day streak</div>
+          </div>
+        </div>
       </div>
 
-      <div class="timer-div">
-        <p id="timer">25:00</p>
+      <div class="grid">
+
+        <!-- Left panel: Timer -->
+        <div class="panel">
+          <div class="modes">
+            <button class="mode active" data-mode="focus">Focus</button>
+            <button class="mode" data-mode="short">Short Break</button>
+            <button class="mode" data-mode="long">Long Break</button>
+          </div>
+
+          <div class="hero">
+            <div class="dial">
+              <svg viewBox="0 0 100 100" aria-hidden="true">
+                <circle class="ring-track" cx="50" cy="50" r="46" />
+                <circle class="ring-prog" id="ring-prog" cx="50" cy="50" r="46"
+                  stroke-dasharray="289.027"
+                  stroke-dashoffset="289.027" />
+              </svg>
+              <div class="disc" id="disc">
+                <div class="time" id="timer-display"></div>
+              </div>
+            </div>
+
+            <div class="phase" id="phase-text">Focus — 25 min</div>
+
+            <div class="controls">
+              <button class="btn primary" id="toggle-btn" aria-label="Begin timer">
+                <span class="play"></span>Begin
+              </button>
+              <button class="btn" id="reset-btn" aria-label="Reset timer">Reset</button>
+            </div>
+
+            <div class="session">
+              <div class="dots" id="session-dots"></div>
+              <span class="lab" id="session-label"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column: Settings + Stats -->
+        <div class="col-right">
+          <div class="panel">
+            <div class="panel-label">Settings</div>
+
+            <div class="set-row">
+              <div><div class="name">Focus</div><div class="sub">a single interval</div></div>
+              <div class="stepper" data-key="focus" data-min="5" data-max="90" data-step="5">
+                <button class="step-btn step-dec" aria-label="Decrease focus duration">−</button>
+                <div class="val"><span class="step-val">25</span><span class="unit"> min</span></div>
+                <button class="step-btn step-inc" aria-label="Increase focus duration">+</button>
+              </div>
+            </div>
+
+            <div class="set-row">
+              <div><div class="name">Short break</div></div>
+              <div class="stepper" data-key="short" data-min="1" data-max="30" data-step="1">
+                <button class="step-btn step-dec" aria-label="Decrease short break duration">−</button>
+                <div class="val"><span class="step-val">5</span><span class="unit"> min</span></div>
+                <button class="step-btn step-inc" aria-label="Increase short break duration">+</button>
+              </div>
+            </div>
+
+            <div class="set-row">
+              <div><div class="name">Long break</div></div>
+              <div class="stepper" data-key="long" data-min="5" data-max="45" data-step="5">
+                <button class="step-btn step-dec" aria-label="Decrease long break duration">−</button>
+                <div class="val"><span class="step-val">15</span><span class="unit"> min</span></div>
+                <button class="step-btn step-inc" aria-label="Increase long break duration">+</button>
+              </div>
+            </div>
+
+            <div class="set-row">
+              <div><div class="name">Long break after</div><div class="sub">focus sessions</div></div>
+              <div class="stepper" data-key="interval" data-min="2" data-max="8" data-step="1">
+                <button class="step-btn step-dec" aria-label="Decrease long break interval">−</button>
+                <div class="val"><span class="step-val">4</span><span class="unit"></span></div>
+                <button class="step-btn step-inc" aria-label="Increase long break interval">+</button>
+              </div>
+            </div>
+
+            <div class="set-row">
+              <div><div class="name">Auto-start breaks</div></div>
+              <button class="toggle on" data-key="autoBreak" aria-pressed="true" aria-label="Toggle auto-start breaks"></button>
+            </div>
+
+            <div class="set-row">
+              <div><div class="name">Auto-start focus</div></div>
+              <button class="toggle" data-key="autoFocus" aria-pressed="false" aria-label="Toggle auto-start focus"></button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-label">Today</div>
+            <div class="stat-grid">
+              <div class="stat">
+                <div class="n red" id="stat-sessions">0</div>
+                <div class="l">sessions</div>
+              </div>
+              <div class="stat">
+                <div class="n blue" id="stat-minutes">0</div>
+                <div class="l">minutes focused</div>
+              </div>
+            </div>
+            <div class="chart" id="chart"></div>
+            <div class="chart-label">last seven days</div>
+          </div>
+        </div>
+
       </div>
 
-      <div class="control-buttons">
-        <button id="toggle-btn" class="btn-primary" onclick="toggleTimer()" aria-label="Start or pause the timer">Start</button>
-        <button class="btn-outline" onclick="resetTimer()" aria-label="Reset the timer to 25 minutes">Reset</button>
+      <!-- Stoic quotes -->
+      <div class="quote-row">
+        <p class="quote-text" id="quote-text"></p>
+        <p class="quote-author" id="quote-author"></p>
       </div>
+
+      <div class="note">間 — the meaningful pause between. Work in one breath, then rest in another.</div>
     </div>
+  </div>
 
-    <div class="quote-container"></div>
-
-    <div class="memento">Memento Mori</div>
-
-    <footer>
-      <p>
-        Photo by <a href="https://unsplash.com/fr/@pixel_goods?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Ally Griffin</a>
-        on <a href="https://unsplash.com/fr/photos/un-crane-avec-des-fleurs-dans-la-bouche-sur-fond-noir-hdWXQGLM7ps?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>
-      </p>
-    </footer>
-
-    <script src="./script.js"></script>
-  </body>
+  <script src="./script.js"></script>
+</body>
 </html>
