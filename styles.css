@@ -32,6 +32,13 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Buttons otherwise keep the UA's 1px/6px padding. On the small fixed-size
+   icon buttons that squeezes the content box narrower than its centred
+   contents, and an overflowing grid item gets pinned to the start edge
+   instead of centring — which shifted the checkbox dot 2px to the right.
+   Rules that set their own padding still win on specificity. */
+button { padding: 0; }
+
 /* paper grain overlay */
 .grain::before {
   content: "";
