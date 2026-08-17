@@ -126,6 +126,7 @@ body {
 }
 .panel-label::after { content: ""; flex: 1; height: 1px; background: var(--key-soft); }
 
+.col-left,
 .col-right { display: flex; flex-direction: column; gap: clamp(16px,1.8vw,24px); }
 
 /* ─── Mode tabs ─────────────────────────────────────────────── */
@@ -298,6 +299,124 @@ body {
 .bar-col .day { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-mute); }
 .chart-label { font-size: 11px; color: var(--ink-mute); font-style: italic; margin-top: 14px; text-align: center; }
 
+/* ─── Tasks ─────────────────────────────────────────────────── */
+
+.task-list { list-style: none; margin: 0; padding: 0; }
+
+.task {
+  display: flex; align-items: center; gap: 11px;
+  padding: 11px 12px 11px 10px;
+  border: 1px solid var(--key-soft);
+  border-left: 3px solid transparent;
+  border-radius: 10px;
+  background: var(--paper-2);
+  margin-bottom: 8px;
+  transition: border-color .18s, opacity .18s, background-color .18s;
+}
+.task:hover { border-color: var(--key); }
+.task.active {
+  border-left-color: var(--red);
+  background: rgba(189,74,44,.05);
+}
+.task.done { opacity: .5; }
+.task.done .task-text { text-decoration: line-through; }
+
+/* completion check */
+.task-check {
+  appearance: none; flex: none; cursor: pointer;
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 1.5px solid var(--key); background: transparent;
+  display: grid; place-items: center; transition: .18s;
+}
+.task-check:hover { border-color: var(--red); }
+.task-check::after {
+  content: ""; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--red); transform: scale(0); transition: transform .18s;
+}
+.task.done .task-check { border-color: var(--red); }
+.task.done .task-check::after { transform: scale(1); }
+
+/* label — clicking selects the task as active */
+.task-text {
+  flex: 1; cursor: pointer;
+  font-size: 15px; line-height: 1.35;
+  word-break: break-word;
+  background: none; border: 0; padding: 0;
+  font-family: inherit; color: var(--ink);
+  text-align: left;
+}
+
+/* pomodoro tally + estimate stepper */
+.task-count {
+  flex: none; font-family: var(--display);
+  font-size: 14px; color: var(--ink-mute);
+  min-width: 34px; text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.task.active .task-count { color: var(--red); }
+
+.task-est { display: flex; gap: 2px; flex: none; }
+.task-est button {
+  appearance: none; cursor: pointer;
+  width: 20px; height: 20px; border-radius: 6px;
+  border: 1px solid var(--key-soft); background: transparent;
+  color: var(--ink-mute); font-family: var(--serif);
+  font-size: 13px; line-height: 1;
+  display: grid; place-items: center; transition: .15s;
+}
+.task-est button:hover { border-color: var(--ink); color: var(--ink); }
+
+.task-del {
+  appearance: none; cursor: pointer; flex: none;
+  width: 22px; height: 22px; border-radius: 6px;
+  border: 0; background: transparent;
+  color: var(--ink-mute); font-size: 17px; line-height: 1;
+  display: grid; place-items: center;
+  opacity: .45; transition: .15s;
+}
+.task-del:hover { opacity: 1; color: var(--red); background: rgba(189,74,44,.09); }
+
+.task-empty {
+  font-style: italic; color: var(--ink-mute);
+  font-size: 13px; text-align: center;
+  padding: 6px 0 12px;
+}
+
+/* add-task form */
+.task-add { display: flex; gap: 8px; margin-top: 12px; }
+.task-add input {
+  flex: 1; min-width: 0;
+  font-family: var(--serif); font-size: 15px; color: var(--ink);
+  background: var(--paper-2);
+  border: 1px solid var(--key-soft); border-radius: 9px;
+  padding: 10px 13px; transition: border-color .18s;
+}
+.task-add input::placeholder { color: var(--ink-mute); opacity: .75; font-style: italic; }
+.task-add input:focus { outline: none; border-color: var(--key); }
+.task-add-btn {
+  appearance: none; cursor: pointer; flex: none;
+  width: 40px; border-radius: 9px;
+  border: 1px solid var(--key); background: var(--paper-2);
+  color: var(--ink); font-family: var(--serif); font-size: 20px; line-height: 1;
+  display: grid; place-items: center; transition: .15s;
+}
+.task-add-btn:hover { background: var(--red); border-color: var(--red); color: #f6ece0; }
+
+.task-foot {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin-top: 13px; padding-top: 12px;
+  border-top: 1px solid var(--key-soft);
+}
+.task-summary { font-size: 12.5px; font-style: italic; color: var(--ink-mute); }
+.task-clear {
+  appearance: none; cursor: pointer; border: 0; background: none;
+  font-family: var(--serif); font-size: 12.5px; font-style: italic;
+  color: var(--ink-mute); text-decoration: underline;
+  text-underline-offset: 3px; padding: 0; transition: color .15s;
+}
+.task-clear:hover { color: var(--red); }
+.task-clear[hidden] { display: none; }
+
 /* ─── Quotes ────────────────────────────────────────────────── */
 
 .quote-row {
@@ -333,7 +452,9 @@ body {
 
 @media (max-width: 480px) {
   .brand .tag { display: none; }
-  .dial { width: clamp(200px,82vw,280px); }
   .time { font-size: clamp(38px,14vw,60px); }
   .controls { flex-wrap: wrap; justify-content: center; }
+  .task { gap: 8px; padding-right: 8px; }
+  .task-text { font-size: 14px; }
+  .task-est { display: none; }
 }

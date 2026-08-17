@@ -71,6 +71,7 @@ const quotes = [
 let state = loadState();
 let tickInterval = null;
 let quoteIndex = 0;
+let controlToken = 0; // invalidates a pending auto-start when the user acts
 
 function loadState() {
   try {
@@ -86,6 +87,8 @@ function loadState() {
       stats:     s.stats     || {},
       streak:    s.streak    || 0,
       lastDay:   s.lastDay   || null,
+      tasks:     Array.isArray(s.tasks) ? s.tasks : [],
+      activeTask: s.activeTask || null,
     };
   } catch (e) {
     return {
@@ -99,6 +102,8 @@ function loadState() {
       stats:     {},
       streak:    0,
       lastDay:   null,
+      tasks:     [],
+      activeTask: null,
     };
   }
 }
@@ -121,6 +126,68 @@ const statMinutes  = document.getElementById('stat-minutes');
 const chartEl      = document.getElementById('chart');
 const quoteText    = document.getElementById('quote-text');
 const quoteAuthor  = document.getElementById('quote-author');
+const taskList     = document.getElementById('task-list');
+const taskEmpty    = document.getElementById('task-empty');
+const taskForm     = document.getElementById('task-form');
+const taskInput    = document.getElementById('task-input');
+const taskSummary  = document.getElementById('task-summary');
+const taskClear    = document.getElementById('task-clear');
+
+// ─── Tasks ────────────────────────────────────────────────────
+function escapeHTML(s) {
+  return s.replace(/[&<>"']/g, c =>
+    ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+}
+
+function activeTask() {
+  return state.tasks.find(t => t.id === state.activeTask && !t.done) || null;
+}
+
+/** Point activeTask at the first unfinished task when the current one is gone/done. */
+function ensureActiveTask() {
+  if (activeTask()) return;
+  const next = state.tasks.find(t => !t.done);
+  state.activeTask = next ? next.id : null;
+}
+
+function renderTasks() {
+  const { tasks } = state;
+
+  taskEmpty.hidden = tasks.length > 0;
+
+  taskList.innerHTML = tasks.map(t => `
+    <li class="task${t.done ? ' done' : ''}${t.id === state.activeTask && !t.done ? ' active' : ''}" data-id="${t.id}">
+      <button class="task-check" data-act="toggle"
+        aria-label="${t.done ? 'Mark as not done' : 'Mark as done'}"
+        aria-pressed="${t.done}"></button>
+      <button class="task-text" data-act="select"
+        aria-label="Focus on this task">${escapeHTML(t.text)}</button>
+      <span class="task-count" title="pomodoros done / estimated">${t.count}/${t.est}</span>
+      <span class="task-est">
+        <button data-act="est-dec" aria-label="Decrease estimate">−</button>
+        <button data-act="est-inc" aria-label="Increase estimate">+</button>
+      </span>
+      <button class="task-del" data-act="delete" aria-label="Delete task">×</button>
+    </li>`).join('');
+
+  const doneCount = tasks.filter(t => t.done).length;
+  const remainingPomos = tasks
+    .filter(t => !t.done)
+    .reduce((sum, t) => sum + Math.max(0, t.est - t.count), 0);
+
+  if (tasks.length === 0) {
+    taskSummary.textContent = '';
+  } else {
+    const mins = remainingPomos * state.durations.focus;
+    const time = mins >= 60
+      ? `${Math.floor(mins / 60)}h ${mins % 60 ? (mins % 60) + 'm' : ''}`.trim()
+      : `${mins}m`;
+    taskSummary.textContent =
+      `${doneCount} of ${tasks.length} done · ${remainingPomos} pomodoro${remainingPomos === 1 ? '' : 's'} left (~${time})`;
+  }
+
+  taskClear.hidden = doneCount === 0;
+}
 
 // ─── Render ───────────────────────────────────────────────────
 function render() {
@@ -144,8 +211,13 @@ function render() {
   progressFill.style.width = (progress * 100) + '%';
   progressFill.style.backgroundColor = M.tint;
 
-  // Phase line
-  phaseText.textContent = running ? M.phrase : `${M.label} — ${durations[mode]} min`;
+  // Phase line — name the task being worked on during focus
+  const task = activeTask();
+  if (mode === 'focus' && task) {
+    phaseText.textContent = running ? `${M.phrase} — ${task.text}` : `Next up — ${task.text}`;
+  } else {
+    phaseText.textContent = running ? M.phrase : `${M.label} — ${durations[mode]} min`;
+  }
 
   // Toggle button
   if (running) {
@@ -230,6 +302,20 @@ function tick() {
   }
 }
 
+/**
+ * Start the timer after an auto-advance delay, but only if the user has not
+ * touched the controls in the meantime — otherwise we would orphan the
+ * interval they just started and run two tickers at once.
+ */
+function autoStartAfterDelay() {
+  const token = ++controlToken;
+  setTimeout(() => {
+    if (token !== controlToken || tickInterval) return;
+    tickInterval = setInterval(tick, 1000);
+    render();
+  }, 400);
+}
+
 function complete() {
   const { mode, durations, interval, autoBreak, autoFocus } = state;
 
@@ -239,17 +325,29 @@ function complete() {
     state.stats[tk] = (state.stats[tk] || 0) + 1;
     bumpStreak();
     state.completed++;
+
+    // Credit the pomodoro to the task in focus
+    const task = activeTask();
+    if (task) {
+      task.count++;
+      if (task.count >= task.est) {
+        task.done = true;
+        ensureActiveTask();
+      }
+    }
+    renderTasks();
+
     const next = (state.completed % interval === 0) ? 'long' : 'short';
     state.mode = next;
     state.remaining = durations[next] * 60;
     render();
-    if (autoBreak) setTimeout(() => { tickInterval = setInterval(tick, 1000); render(); }, 400);
+    if (autoBreak) autoStartAfterDelay();
   } else {
     chime(false);
     state.mode = 'focus';
     state.remaining = durations.focus * 60;
     render();
-    if (autoFocus) setTimeout(() => { tickInterval = setInterval(tick, 1000); render(); }, 400);
+    if (autoFocus) autoStartAfterDelay();
   }
 }
 
@@ -263,6 +361,7 @@ function bumpStreak() {
 }
 
 function toggleTimer() {
+  controlToken++;
   if (tickInterval) {
     clearInterval(tickInterval);
     tickInterval = null;
@@ -275,6 +374,7 @@ function toggleTimer() {
 }
 
 function resetTimer() {
+  controlToken++;
   clearInterval(tickInterval);
   tickInterval = null;
   state.remaining = state.durations[state.mode] * 60;
@@ -282,6 +382,7 @@ function resetTimer() {
 }
 
 function switchMode(newMode) {
+  controlToken++;
   clearInterval(tickInterval);
   tickInterval = null;
   state.mode = newMode;
@@ -335,6 +436,7 @@ document.querySelectorAll('.stepper').forEach(stepper => {
     } else {
       state.durations[key] = Math.min(max, Math.max(min, state.durations[key] + delta));
       if (key === state.mode && !tickInterval) state.remaining = state.durations[key] * 60;
+      if (key === 'focus') renderTasks(); // summary estimates time from focus length
     }
     render();
   }
@@ -350,7 +452,62 @@ document.querySelectorAll('.toggle').forEach(toggle => {
   });
 });
 
+// ─── Task events ──────────────────────────────────────────────
+taskForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const text = taskInput.value.trim();
+  if (!text) return;
+  state.tasks.push({
+    id: `t${Date.now()}${Math.floor(Math.random() * 1000)}`,
+    text, done: false, est: 1, count: 0,
+  });
+  taskInput.value = '';
+  ensureActiveTask();
+  renderTasks();
+  render();
+});
+
+// Delegated — the list is re-rendered, so listeners cannot live on the rows
+taskList.addEventListener('click', e => {
+  const btn = e.target.closest('[data-act]');
+  if (!btn) return;
+  const li = btn.closest('.task');
+  const task = state.tasks.find(t => t.id === li.dataset.id);
+  if (!task) return;
+
+  switch (btn.dataset.act) {
+    case 'toggle':
+      task.done = !task.done;
+      ensureActiveTask();
+      break;
+    case 'select':
+      if (!task.done) state.activeTask = task.id;
+      break;
+    case 'est-inc':
+      task.est = Math.min(20, task.est + 1);
+      break;
+    case 'est-dec':
+      task.est = Math.max(1, task.est - 1);
+      break;
+    case 'delete':
+      state.tasks = state.tasks.filter(t => t.id !== task.id);
+      ensureActiveTask();
+      break;
+  }
+  renderTasks();
+  render();
+});
+
+taskClear.addEventListener('click', () => {
+  state.tasks = state.tasks.filter(t => !t.done);
+  ensureActiveTask();
+  renderTasks();
+  render();
+});
+
 // ─── Init ─────────────────────────────────────────────────────
 setInterval(showNextQuote, 180 * 1000);
 showNextQuote();
+ensureActiveTask();
+renderTasks();
 render();
