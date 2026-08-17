@@ -29,7 +29,8 @@
 
       <div class="grid">
 
-        <!-- Left panel: Timer -->
+        <!-- Left column: Timer + Tasks -->
+        <div class="col-left">
         <div class="panel">
           <div class="modes">
             <button class="mode active" data-mode="focus">Focus</button>
@@ -59,6 +60,26 @@
               <span class="lab" id="session-label"></span>
             </div>
           </div>
+        </div>
+
+        <!-- Tasks -->
+        <div class="panel">
+          <div class="panel-label">Tasks</div>
+
+          <ul class="task-list" id="task-list"></ul>
+          <p class="task-empty" id="task-empty">Nothing yet — name the work you intend to do.</p>
+
+          <form class="task-add" id="task-form" autocomplete="off">
+            <input type="text" id="task-input" maxlength="120"
+              placeholder="What are you working on?" aria-label="New task" />
+            <button type="submit" class="task-add-btn" aria-label="Add task">+</button>
+          </form>
+
+          <div class="task-foot">
+            <span class="task-summary" id="task-summary"></span>
+            <button class="task-clear" id="task-clear" type="button">clear finished</button>
+          </div>
+        </div>
         </div>
 
         <!-- Right column: Settings + Stats -->
