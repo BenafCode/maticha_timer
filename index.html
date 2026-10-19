@@ -3,68 +3,71 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MA · 間 — Maticha</title>
+  <title>MA · 間 — Focus Timer</title>
+  <meta name="description" content="A Pomodoro focus timer built around 間 (ma), the meaningful interval." />
+  <meta name="theme-color" content="#FAFAF7" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="grain">
-  <div class="app">
-    <div class="board">
+<body>
+  <div class="page">
 
-      <div class="top">
-        <div class="brand">
-          <span class="mark">MA</span>
-          <span class="kanji">間</span>
-          <span class="tag">the art of the interval</span>
-        </div>
-        <div class="top-right">
-          <div class="streak">
-            <div class="n" id="streak-count">0</div>
-            <div class="l">day streak</div>
-          </div>
-        </div>
+    <header class="masthead">
+      <div class="mast-id">
+        <span class="mark">MA</span>
+        <span class="kanji">間</span>
       </div>
+      <p class="mast-tag">the art of the interval</p>
+      <div class="mast-streak">
+        <span class="streak-n" id="streak-count">0</span>
+        <span class="streak-l">day<br />streak</span>
+      </div>
+    </header>
 
-      <div class="grid">
+    <main class="grid">
 
-        <!-- Left column: Timer + Tasks -->
-        <div class="col-left">
-        <div class="panel">
-          <div class="modes">
-            <button class="mode active" data-mode="focus">Focus</button>
+      <!-- ─── Main column ─────────────────────────────── -->
+      <div class="col-main">
+
+        <section class="block">
+          <div class="block-head">
+            <span class="idx">01</span>
+            <h2 class="block-title">Interval</h2>
+          </div>
+
+          <nav class="modes" aria-label="Timer mode">
+            <button class="mode is-active" data-mode="focus">Focus</button>
             <button class="mode" data-mode="short">Short Break</button>
             <button class="mode" data-mode="long">Long Break</button>
+          </nav>
+
+          <div class="time" id="timer-display"></div>
+
+          <div class="progress-track">
+            <div class="progress-fill" id="progress-fill"></div>
           </div>
 
-          <div class="hero">
-            <div class="timer-face">
-              <div class="time" id="timer-display"></div>
-            </div>
-            <div class="progress-track">
-              <div class="progress-fill" id="progress-fill"></div>
-            </div>
-
-            <div class="phase" id="phase-text">Focus — 25 min</div>
-
-            <div class="controls">
-              <button class="btn primary" id="toggle-btn" aria-label="Begin timer">
-                <span class="play"></span>Begin
-              </button>
-              <button class="btn" id="reset-btn" aria-label="Reset timer">Reset</button>
-            </div>
-
+          <div class="meta-row">
+            <p class="phase" id="phase-text">Focus — 25 min</p>
             <div class="session">
               <div class="dots" id="session-dots"></div>
               <span class="lab" id="session-label"></span>
             </div>
           </div>
-        </div>
 
-        <!-- Tasks -->
-        <div class="panel">
-          <div class="panel-label">Tasks</div>
+          <div class="controls">
+            <button class="btn btn-primary" id="toggle-btn" aria-label="Begin timer">Begin</button>
+            <button class="btn" id="reset-btn" aria-label="Reset timer">Reset</button>
+          </div>
+        </section>
+
+        <section class="block">
+          <div class="block-head">
+            <span class="idx">02</span>
+            <h2 class="block-title">Tasks</h2>
+          </div>
 
           <ul class="task-list" id="task-list"></ul>
           <p class="task-empty" id="task-empty">Nothing yet — name the work you intend to do.</p>
@@ -72,95 +75,103 @@
           <form class="task-add" id="task-form" autocomplete="off">
             <input type="text" id="task-input" maxlength="120"
               placeholder="What are you working on?" aria-label="New task" />
-            <button type="submit" class="task-add-btn" aria-label="Add task">+</button>
+            <button type="submit" class="task-add-btn" aria-label="Add task">Add</button>
           </form>
 
           <div class="task-foot">
             <span class="task-summary" id="task-summary"></span>
-            <button class="task-clear" id="task-clear" type="button">clear finished</button>
+            <button class="task-clear" id="task-clear" type="button">Clear finished</button>
           </div>
-        </div>
-        </div>
-
-        <!-- Right column: Settings + Stats -->
-        <div class="col-right">
-          <div class="panel">
-            <div class="panel-label">Settings</div>
-
-            <div class="set-row">
-              <div><div class="name">Focus</div><div class="sub">a single interval</div></div>
-              <div class="stepper" data-key="focus" data-min="5" data-max="90" data-step="5">
-                <button class="step-btn step-dec" aria-label="Decrease focus duration">−</button>
-                <div class="val"><span class="step-val">25</span><span class="unit"> min</span></div>
-                <button class="step-btn step-inc" aria-label="Increase focus duration">+</button>
-              </div>
-            </div>
-
-            <div class="set-row">
-              <div><div class="name">Short break</div></div>
-              <div class="stepper" data-key="short" data-min="1" data-max="30" data-step="1">
-                <button class="step-btn step-dec" aria-label="Decrease short break duration">−</button>
-                <div class="val"><span class="step-val">5</span><span class="unit"> min</span></div>
-                <button class="step-btn step-inc" aria-label="Increase short break duration">+</button>
-              </div>
-            </div>
-
-            <div class="set-row">
-              <div><div class="name">Long break</div></div>
-              <div class="stepper" data-key="long" data-min="5" data-max="45" data-step="5">
-                <button class="step-btn step-dec" aria-label="Decrease long break duration">−</button>
-                <div class="val"><span class="step-val">15</span><span class="unit"> min</span></div>
-                <button class="step-btn step-inc" aria-label="Increase long break duration">+</button>
-              </div>
-            </div>
-
-            <div class="set-row">
-              <div><div class="name">Long break after</div><div class="sub">focus sessions</div></div>
-              <div class="stepper" data-key="interval" data-min="2" data-max="8" data-step="1">
-                <button class="step-btn step-dec" aria-label="Decrease long break interval">−</button>
-                <div class="val"><span class="step-val">4</span><span class="unit"></span></div>
-                <button class="step-btn step-inc" aria-label="Increase long break interval">+</button>
-              </div>
-            </div>
-
-            <div class="set-row">
-              <div><div class="name">Auto-start breaks</div></div>
-              <button class="toggle on" data-key="autoBreak" aria-pressed="true" aria-label="Toggle auto-start breaks"></button>
-            </div>
-
-            <div class="set-row">
-              <div><div class="name">Auto-start focus</div></div>
-              <button class="toggle" data-key="autoFocus" aria-pressed="false" aria-label="Toggle auto-start focus"></button>
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="panel-label">Today</div>
-            <div class="stat-grid">
-              <div class="stat">
-                <div class="n red" id="stat-sessions">0</div>
-                <div class="l">sessions</div>
-              </div>
-              <div class="stat">
-                <div class="n blue" id="stat-minutes">0</div>
-                <div class="l">minutes focused</div>
-              </div>
-            </div>
-            <div class="chart" id="chart"></div>
-            <div class="chart-label">last seven days</div>
-          </div>
-        </div>
-
+        </section>
       </div>
 
-      <!-- Stoic quotes -->
-      <div class="quote-row">
+      <!-- ─── Side column ─────────────────────────────── -->
+      <div class="col-side">
+
+        <section class="block">
+          <div class="block-head">
+            <span class="idx">03</span>
+            <h2 class="block-title">Settings</h2>
+          </div>
+
+          <div class="set-row">
+            <div class="set-label"><span class="name">Focus</span><span class="sub">a single interval</span></div>
+            <div class="stepper" data-key="focus" data-min="5" data-max="90" data-step="5">
+              <button class="step-btn step-dec" aria-label="Decrease focus duration">–</button>
+              <span class="val"><span class="step-val">25</span><span class="unit">min</span></span>
+              <button class="step-btn step-inc" aria-label="Increase focus duration">+</button>
+            </div>
+          </div>
+
+          <div class="set-row">
+            <div class="set-label"><span class="name">Short break</span></div>
+            <div class="stepper" data-key="short" data-min="1" data-max="30" data-step="1">
+              <button class="step-btn step-dec" aria-label="Decrease short break duration">–</button>
+              <span class="val"><span class="step-val">5</span><span class="unit">min</span></span>
+              <button class="step-btn step-inc" aria-label="Increase short break duration">+</button>
+            </div>
+          </div>
+
+          <div class="set-row">
+            <div class="set-label"><span class="name">Long break</span></div>
+            <div class="stepper" data-key="long" data-min="5" data-max="45" data-step="5">
+              <button class="step-btn step-dec" aria-label="Decrease long break duration">–</button>
+              <span class="val"><span class="step-val">15</span><span class="unit">min</span></span>
+              <button class="step-btn step-inc" aria-label="Increase long break duration">+</button>
+            </div>
+          </div>
+
+          <div class="set-row">
+            <div class="set-label"><span class="name">Long break after</span><span class="sub">focus sessions</span></div>
+            <div class="stepper" data-key="interval" data-min="2" data-max="8" data-step="1">
+              <button class="step-btn step-dec" aria-label="Decrease long break interval">–</button>
+              <span class="val"><span class="step-val">4</span><span class="unit"></span></span>
+              <button class="step-btn step-inc" aria-label="Increase long break interval">+</button>
+            </div>
+          </div>
+
+          <div class="set-row">
+            <div class="set-label"><span class="name">Auto-start breaks</span></div>
+            <button class="toggle is-on" data-key="autoBreak" aria-pressed="true" aria-label="Toggle auto-start breaks"></button>
+          </div>
+
+          <div class="set-row">
+            <div class="set-label"><span class="name">Auto-start focus</span></div>
+            <button class="toggle" data-key="autoFocus" aria-pressed="false" aria-label="Toggle auto-start focus"></button>
+          </div>
+        </section>
+
+        <section class="block">
+          <div class="block-head">
+            <span class="idx">04</span>
+            <h2 class="block-title">Today</h2>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat">
+              <span class="stat-n accent" id="stat-sessions">0</span>
+              <span class="stat-l">Sessions</span>
+            </div>
+            <div class="stat">
+              <span class="stat-n" id="stat-minutes">0</span>
+              <span class="stat-l">Minutes</span>
+            </div>
+          </div>
+
+          <div class="chart" id="chart"></div>
+          <p class="chart-label">Last seven days</p>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <blockquote class="quote">
         <p class="quote-text" id="quote-text"></p>
-        <p class="quote-author" id="quote-author"></p>
-      </div>
+        <cite class="quote-author" id="quote-author"></cite>
+      </blockquote>
+      <p class="colophon"><span class="colophon-kanji">間</span> The meaningful pause between. Work in one breath, then rest in another.</p>
+    </footer>
 
-      <div class="note">間 — the meaningful pause between. Work in one breath, then rest in another.</div>
-    </div>
   </div>
 
   <script src="./script.js"></script>

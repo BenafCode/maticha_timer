@@ -5,9 +5,9 @@
 const STORE = 'ma_timer_v1';
 
 const MODES = {
-  focus: { label: 'Focus',       phrase: 'one breath of work', tint: '#bd4a2c' },
-  short: { label: 'Short Break', phrase: 'rest, lightly',      tint: '#3f88a3' },
-  long:  { label: 'Long Break',  phrase: 'step away',          tint: '#3f88a3' },
+  focus: { label: 'Focus',       phrase: 'one breath of work', tint: '#e2231a' },
+  short: { label: 'Short Break', phrase: 'rest, lightly',      tint: '#111110' },
+  long:  { label: 'Long Break',  phrase: 'step away',          tint: '#111110' },
 };
 
 const DEFAULTS = {
@@ -156,7 +156,7 @@ function renderTasks() {
   taskEmpty.hidden = tasks.length > 0;
 
   taskList.innerHTML = tasks.map(t => `
-    <li class="task${t.done ? ' done' : ''}${t.id === state.activeTask && !t.done ? ' active' : ''}" data-id="${t.id}">
+    <li class="task${t.done ? ' done' : ''}${t.id === state.activeTask && !t.done ? ' is-active' : ''}" data-id="${t.id}">
       <button class="task-check" data-act="toggle"
         aria-label="${t.done ? 'Mark as not done' : 'Mark as done'}"
         aria-pressed="${t.done}"></button>
@@ -221,19 +221,19 @@ function render() {
 
   // Toggle button
   if (running) {
-    toggleBtn.innerHTML = '<span class="pause"><i></i><i></i></span>Pause';
+    toggleBtn.textContent = 'Pause';
     toggleBtn.setAttribute('aria-label', 'Pause timer');
   } else if (remaining < total && remaining > 0) {
-    toggleBtn.innerHTML = '<span class="play"></span>Resume';
+    toggleBtn.textContent = 'Resume';
     toggleBtn.setAttribute('aria-label', 'Resume timer');
   } else {
-    toggleBtn.innerHTML = '<span class="play"></span>Begin';
+    toggleBtn.textContent = 'Begin';
     toggleBtn.setAttribute('aria-label', 'Begin timer');
   }
 
   // Mode tabs
   document.querySelectorAll('.mode').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.mode === mode);
+    btn.classList.toggle('is-active', btn.dataset.mode === mode);
   });
 
   // Session dots
@@ -263,12 +263,16 @@ function render() {
     days.push({ n: stats[k] || 0, label: ['S','M','T','W','T','F','S'][d.getDay()], today: i === 0 });
   }
   const maxN = Math.max(4, ...days.map(d => d.n));
-  chartEl.innerHTML = days.map(d =>
-    `<div class="bar-col">
-      <div class="bar${d.today ? ' today' : ''}" style="height:${Math.max(4,(d.n/maxN)*72)}px"></div>
-      <div class="day">${d.label}</div>
-    </div>`
-  ).join('');
+  // Bars and labels are separate rows so the baseline rule runs unbroken
+  // beneath the plot, with the weekday letters below it.
+  chartEl.innerHTML =
+    `<div class="chart-bars">${days.map(d =>
+      `<div class="bar-col"><div class="bar${d.today ? ' today' : ''}" ` +
+      `style="height:${Math.max(2, (d.n / maxN) * 72)}px"></div></div>`
+    ).join('')}</div>` +
+    `<div class="chart-days">${days.map(d =>
+      `<span class="day">${d.label}</span>`
+    ).join('')}</div>`;
 
   // Steppers
   document.querySelectorAll('.stepper').forEach(s => {
@@ -279,7 +283,7 @@ function render() {
   // Toggles
   document.querySelectorAll('.toggle').forEach(t => {
     const on = state[t.dataset.key];
-    t.classList.toggle('on', on);
+    t.classList.toggle('is-on', on);
     t.setAttribute('aria-pressed', String(on));
   });
 
