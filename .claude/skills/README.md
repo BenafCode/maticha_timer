@@ -36,25 +36,32 @@ its own house rules. This timer is an app screen, not a page.
 Commons and the Art Institute of Chicago to fetch openly licensed photography. The
 other scripts are local only.
 
-## logo-design is installed slim
+## logo-design: the gallery is local only
 
-Upstream (commit `7340903`) ships a 14MB library of 1,432 classified real-world SVG
-logos under `assets/library/`. It was left out to keep this repository small, which
-costs two things: the category research in Phase 2 (`search_library.py --industry
-... --summary`) and the peer test in the Phase 5 craft pass, which compares a mark
-against exemplary files at the same size. Everything else — the brief, concepts,
-SVG construction rules, the audit, the test sheet, export variants and the
-presentation board — works as shipped. Its nine scripts are stdlib-only Python 3
-with no network calls; rendering shells out to whichever of rsvg-convert, Inkscape
-or headless Chromium is present.
+Upstream (commit `7340903`) ships a 14MB gallery of 1,432 classified real-world SVG
+logos under `assets/library/`. It is present locally but **git ignored**, so the
+skill has its full reference set without the repository carrying third-party marks
+that are trademarks of their owners. `.gitignore` holds the rule; nothing under
+`assets/` is ever staged.
 
-To restore the library:
+That keeps the two steps a slim install would lose: the category survey in Phase 2
+(`search_library.py --industry ... --summary`) and the peer test in the Phase 5
+craft pass, which sets a mark beside exemplary files at the same size.
+
+The nine scripts are stdlib-only Python 3 with no network calls. Rendering shells
+out to whichever of rsvg-convert, Inkscape or headless Chromium is present — and
+in this container it finds Chromium but launches it without `--no-sandbox`, which
+hangs as root. Render through Playwright instead.
+
+A fresh clone of this repository has no gallery. To fetch it again:
 
 ```bash
 git clone --depth 1 https://github.com/kaankiziltug/logo-design-skill /tmp/lds
 cp -r /tmp/lds/skills/logo-design/assets .claude/skills/logo-design/
-python3 .claude/skills/logo-design/scripts/build_catalog.py
 ```
+
+The catalog ships with it, so `build_catalog.py` only needs running if you add
+files of your own.
 
 ## Note on this app
 
