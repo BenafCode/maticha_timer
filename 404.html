@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nothing here — MA · 間</title>
+  <meta name="description" content="That page does not exist. Return to the MA · 間 focus timer." />
+  <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#131209" media="(prefers-color-scheme: dark)" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23131209'/%3E%3Ctext x='32' y='47' font-family='Hiragino Sans, Noto Sans JP, sans-serif' font-size='44' fill='%23FAFAF7' text-anchor='middle'%3E%E9%96%93%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('ma_theme_v1');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) { /* private mode */ }
+    })();
+  </script>
+  <style>
+    .nf { min-height: 100vh; display: grid; place-content: center; gap: var(--space-300);
+          max-width: 680px; margin: 0 auto; padding: var(--space-600) var(--space-200); }
+    .nf-code { font-family: var(--mono); color: var(--accent); letter-spacing: 0.08em; }
+    .nf h1 { margin: 0; text-wrap: balance; }
+    .nf p { margin: 0; color: var(--text-muted); text-wrap: pretty; }
+    .nf-back { justify-self: start; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <main class="nf">
+    <span class="nf-code caption-3">404</span>
+    <h1 class="heading-3">This interval does not exist</h1>
+    <p class="body-3">The page you asked for is not part of this site. The timer, your tasks and
+      your seven day record are all where you left them.</p>
+    <a class="btn nf-back button-md" href="./">
+      <span>Back to the timer</span>
+    </a>
+  </main>
+</body>
+</html>

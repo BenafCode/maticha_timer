@@ -3,173 +3,272 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>MA · 間 — Focus Timer</title>
-  <meta name="description" content="A Pomodoro focus timer built around 間 (ma), the meaningful interval." />
-  <meta name="theme-color" content="#FAFAF7" />
+  <meta name="description" content="A Pomodoro focus timer built around 間 (ma), the meaningful interval. Run focus sessions, track the tasks inside them, and keep a seven day record. Nothing leaves your browser." />
+  <meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#131209" media="(prefers-color-scheme: dark)" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="MA · 間 — Focus Timer" />
+  <meta property="og:description" content="A Pomodoro focus timer built around 間 (ma), the meaningful interval." />
+  <meta property="og:url" content="https://benafcode.github.io/maticha_timer/" />
+  <meta property="og:image" content="https://benafcode.github.io/maticha_timer/docs/preview.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="MA · 間 — Focus Timer" />
+  <meta name="twitter:description" content="A Pomodoro focus timer built around 間 (ma), the meaningful interval." />
+  <meta name="twitter:image" content="https://benafcode.github.io/maticha_timer/docs/preview.png" />
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23131209'/%3E%3Ctext x='32' y='47' font-family='Hiragino Sans, Noto Sans JP, sans-serif' font-size='44' fill='%23FAFAF7' text-anchor='middle'%3E%E9%96%93%3C/text%3E%3C/svg%3E" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23131209'/%3E%3Ctext x='32' y='47' font-family='Hiragino Sans, Noto Sans JP, sans-serif' font-size='44' fill='%23FAFAF7' text-anchor='middle'%3E%E9%96%93%3C/text%3E%3C/svg%3E" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+
+  <script>
+    /* Apply a saved theme before first paint so the palette never flashes. */
+    (function () {
+      try {
+        var t = localStorage.getItem('ma_theme_v1');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) { /* private mode: fall through to the OS preference */ }
+    })();
+  </script>
 </head>
 <body>
+
+  <a class="skip-link button-sm" href="#main">Skip to content</a>
+
+  <!-- Icons, drawn in Phosphor's idiom (256 grid, 16px round strokes). B6. -->
+  <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
+    <defs>
+      <symbol id="i-play" viewBox="0 0 256 256"><path d="M96 48 216 128 96 208Z" fill="currentColor" /></symbol>
+      <symbol id="i-pause" viewBox="0 0 256 256"><rect x="80" y="52" width="32" height="152" rx="8" fill="currentColor" /><rect x="144" y="52" width="32" height="152" rx="8" fill="currentColor" /></symbol>
+      <symbol id="i-reset" viewBox="0 0 256 256" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"><path d="M65.8 190.2a88 88 0 1 0 0-124.4L31.8 99.7" /><polyline points="79.8 99.7 31.8 99.7 31.8 51.7" /></symbol>
+      <symbol id="i-check" viewBox="0 0 256 256" fill="none" stroke="currentColor" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"><polyline points="208 80 112 176 48 112" /></symbol>
+      <symbol id="i-plus" viewBox="0 0 256 256" fill="none" stroke="currentColor" stroke-width="20" stroke-linecap="round"><path d="M40 128h176M128 40v176" /></symbol>
+      <symbol id="i-minus" viewBox="0 0 256 256" fill="none" stroke="currentColor" stroke-width="20" stroke-linecap="round"><path d="M40 128h176" /></symbol>
+      <symbol id="i-trash" viewBox="0 0 256 256" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"><path d="M216 56H40M104 24h48M200 56v152a8 8 0 0 1-8 8H64a8 8 0 0 1-8-8V56M104 104v64M152 104v64" /></symbol>
+      <symbol id="i-sun" viewBox="0 0 256 256" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"><circle cx="128" cy="128" r="56" /><path d="M128 36V16M128 240v-20M186 70l14-14M56 200l14-14M220 128h20M16 128h20M186 186l14 14M56 56l14 14" /></symbol>
+      <symbol id="i-moon" viewBox="0 0 256 256" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"><path d="M216.7 152.6A91.9 91.9 0 0 1 103.4 39.3a92 92 0 1 0 113.3 113.3Z" /></symbol>
+    </defs>
+  </svg>
+
   <div class="page">
 
     <header class="masthead">
       <div class="mast-id">
         <span class="mark">MA</span>
-        <span class="kanji">間</span>
+        <span class="kanji" aria-hidden="true">間</span>
       </div>
-      <p class="mast-tag">the art of the interval</p>
-      <div class="mast-streak">
-        <span class="streak-n" id="streak-count">0</span>
-        <span class="streak-l">day<br />streak</span>
+      <p class="mast-tag caption-4">the art of the interval</p>
+
+      <div class="mast-end">
+        <div class="mast-streak">
+          <span class="streak-n" id="streak-count">0</span>
+          <span class="streak-l caption-5">day<br />streak</span>
+        </div>
+        <button class="icon-btn" id="theme-btn" type="button" aria-label="Switch to dark theme">
+          <svg class="icon" aria-hidden="true"><use href="#i-moon" /></svg>
+        </button>
       </div>
     </header>
 
-    <main class="grid">
+    <main class="grid" id="main">
 
       <!-- ─── Main column ─────────────────────────────── -->
       <div class="col-main">
 
-        <section class="block">
-          <div class="block-head">
-            <span class="idx">01</span>
-            <h2 class="block-title">Interval</h2>
+        <section class="card reveal" aria-labelledby="h-interval">
+          <div class="card-head">
+            <span class="idx caption-3">01</span>
+            <h2 class="card-title title-5" id="h-interval">Interval</h2>
           </div>
 
           <nav class="modes" aria-label="Timer mode">
-            <button class="mode is-active" data-mode="focus">Focus</button>
-            <button class="mode" data-mode="short">Short Break</button>
-            <button class="mode" data-mode="long">Long Break</button>
+            <button class="mode button-xsm is-active" type="button" data-mode="focus">Focus</button>
+            <button class="mode button-xsm" type="button" data-mode="short">Short break</button>
+            <button class="mode button-xsm" type="button" data-mode="long">Long break</button>
           </nav>
 
-          <div class="time" id="timer-display"></div>
+          <div class="hero">
+            <div class="time" id="timer-display" role="timer" aria-live="off"></div>
 
-          <div class="progress-track">
-            <div class="progress-fill" id="progress-fill"></div>
-          </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="progress-fill"></div>
+            </div>
 
-          <div class="meta-row">
-            <p class="phase" id="phase-text">Focus — 25 min</p>
-            <div class="session">
-              <div class="dots" id="session-dots"></div>
-              <span class="lab" id="session-label"></span>
+            <div class="meta-row">
+              <p class="phase body-6" id="phase-text">Focus — 25 min</p>
+              <div class="session">
+                <div class="dots" id="session-dots"></div>
+                <span class="lab caption-5" id="session-label"></span>
+              </div>
             </div>
           </div>
 
           <div class="controls">
-            <button class="btn btn-primary" id="toggle-btn" aria-label="Begin timer">Begin</button>
-            <button class="btn" id="reset-btn" aria-label="Reset timer">Reset</button>
+            <button class="btn btn-primary button-md" id="toggle-btn" type="button" aria-label="Begin timer">
+              <svg class="icon" aria-hidden="true"><use href="#i-play" /></svg>
+              <span id="toggle-label">Begin</span>
+            </button>
+            <button class="btn button-md" id="reset-btn" type="button" aria-label="Reset timer">
+              <svg class="icon" aria-hidden="true"><use href="#i-reset" /></svg>
+              <span>Reset</span>
+            </button>
           </div>
         </section>
 
-        <section class="block">
-          <div class="block-head">
-            <span class="idx">02</span>
-            <h2 class="block-title">Tasks</h2>
+        <section class="card reveal" aria-labelledby="h-tasks">
+          <div class="card-head">
+            <span class="idx caption-3">02</span>
+            <h2 class="card-title title-5" id="h-tasks">Tasks</h2>
           </div>
 
           <ul class="task-list" id="task-list"></ul>
-          <p class="task-empty" id="task-empty">Nothing yet — name the work you intend to do.</p>
 
-          <form class="task-add" id="task-form" autocomplete="off">
-            <input type="text" id="task-input" maxlength="120"
-              placeholder="What are you working on?" aria-label="New task" />
-            <button type="submit" class="task-add-btn" aria-label="Add task">Add</button>
+          <div class="task-empty" id="task-empty">
+            <p class="task-empty-title title-3">Name the work first</p>
+            <p class="task-empty-body body-6">Write down what this interval is for. Each finished
+              focus session is credited to the task you have in view, so the record below reflects
+              real work rather than time passed.</p>
+          </div>
+
+          <form class="task-add" id="task-form" autocomplete="off" novalidate>
+            <input class="body-6" type="text" id="task-input" maxlength="120"
+              placeholder="What are you working on?" aria-label="New task"
+              aria-describedby="task-error" />
+            <button type="submit" class="task-add-btn button-sm" aria-label="Add task">Add</button>
           </form>
+          <p class="task-error caption-5" id="task-error" role="status" hidden></p>
 
           <div class="task-foot">
-            <span class="task-summary" id="task-summary"></span>
-            <button class="task-clear" id="task-clear" type="button">Clear finished</button>
+            <span class="task-summary caption-5" id="task-summary"></span>
+            <button class="task-clear caption-4" id="task-clear" type="button">Clear finished</button>
           </div>
         </section>
       </div>
 
       <!-- ─── Side column ─────────────────────────────── -->
-      <div class="col-side">
+      <aside class="col-side" aria-label="Settings and statistics">
 
-        <section class="block">
-          <div class="block-head">
-            <span class="idx">03</span>
-            <h2 class="block-title">Settings</h2>
+        <section class="card reveal" aria-labelledby="h-settings">
+          <div class="card-head">
+            <span class="idx caption-3">03</span>
+            <h2 class="card-title title-5" id="h-settings">Settings</h2>
           </div>
 
           <div class="set-row">
-            <div class="set-label"><span class="name">Focus</span><span class="sub">a single interval</span></div>
+            <div class="set-label">
+              <span class="name body-6">Focus</span>
+              <span class="sub caption-5">a single interval</span>
+            </div>
             <div class="stepper" data-key="focus" data-min="5" data-max="90" data-step="5">
-              <button class="step-btn step-dec" aria-label="Decrease focus duration">–</button>
-              <span class="val"><span class="step-val">25</span><span class="unit">min</span></span>
-              <button class="step-btn step-inc" aria-label="Increase focus duration">+</button>
+              <button class="step-btn step-dec" type="button" aria-label="Decrease focus duration">
+                <svg class="icon" aria-hidden="true"><use href="#i-minus" /></svg>
+              </button>
+              <span class="val"><span class="step-val">25</span><span class="unit caption-5">min</span></span>
+              <button class="step-btn step-inc" type="button" aria-label="Increase focus duration">
+                <svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg>
+              </button>
             </div>
           </div>
 
           <div class="set-row">
-            <div class="set-label"><span class="name">Short break</span></div>
+            <div class="set-label"><span class="name body-6">Short break</span></div>
             <div class="stepper" data-key="short" data-min="1" data-max="30" data-step="1">
-              <button class="step-btn step-dec" aria-label="Decrease short break duration">–</button>
-              <span class="val"><span class="step-val">5</span><span class="unit">min</span></span>
-              <button class="step-btn step-inc" aria-label="Increase short break duration">+</button>
+              <button class="step-btn step-dec" type="button" aria-label="Decrease short break duration">
+                <svg class="icon" aria-hidden="true"><use href="#i-minus" /></svg>
+              </button>
+              <span class="val"><span class="step-val">5</span><span class="unit caption-5">min</span></span>
+              <button class="step-btn step-inc" type="button" aria-label="Increase short break duration">
+                <svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg>
+              </button>
             </div>
           </div>
 
           <div class="set-row">
-            <div class="set-label"><span class="name">Long break</span></div>
+            <div class="set-label"><span class="name body-6">Long break</span></div>
             <div class="stepper" data-key="long" data-min="5" data-max="45" data-step="5">
-              <button class="step-btn step-dec" aria-label="Decrease long break duration">–</button>
-              <span class="val"><span class="step-val">15</span><span class="unit">min</span></span>
-              <button class="step-btn step-inc" aria-label="Increase long break duration">+</button>
+              <button class="step-btn step-dec" type="button" aria-label="Decrease long break duration">
+                <svg class="icon" aria-hidden="true"><use href="#i-minus" /></svg>
+              </button>
+              <span class="val"><span class="step-val">15</span><span class="unit caption-5">min</span></span>
+              <button class="step-btn step-inc" type="button" aria-label="Increase long break duration">
+                <svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg>
+              </button>
             </div>
           </div>
 
           <div class="set-row">
-            <div class="set-label"><span class="name">Long break after</span><span class="sub">focus sessions</span></div>
+            <div class="set-label">
+              <span class="name body-6">Long break after</span>
+              <span class="sub caption-5">focus sessions</span>
+            </div>
             <div class="stepper" data-key="interval" data-min="2" data-max="8" data-step="1">
-              <button class="step-btn step-dec" aria-label="Decrease long break interval">–</button>
-              <span class="val"><span class="step-val">4</span><span class="unit"></span></span>
-              <button class="step-btn step-inc" aria-label="Increase long break interval">+</button>
+              <button class="step-btn step-dec" type="button" aria-label="Decrease long break interval">
+                <svg class="icon" aria-hidden="true"><use href="#i-minus" /></svg>
+              </button>
+              <span class="val"><span class="step-val">4</span><span class="unit caption-5"></span></span>
+              <button class="step-btn step-inc" type="button" aria-label="Increase long break interval">
+                <svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg>
+              </button>
             </div>
           </div>
 
           <div class="set-row">
-            <div class="set-label"><span class="name">Auto-start breaks</span></div>
-            <button class="toggle is-on" data-key="autoBreak" aria-pressed="true" aria-label="Toggle auto-start breaks"></button>
+            <div class="set-label"><span class="name body-6">Start breaks automatically</span></div>
+            <button class="toggle is-on" type="button" data-key="autoBreak" aria-pressed="true"
+              aria-label="Start breaks automatically"></button>
           </div>
 
           <div class="set-row">
-            <div class="set-label"><span class="name">Auto-start focus</span></div>
-            <button class="toggle" data-key="autoFocus" aria-pressed="false" aria-label="Toggle auto-start focus"></button>
+            <div class="set-label"><span class="name body-6">Start focus automatically</span></div>
+            <button class="toggle" type="button" data-key="autoFocus" aria-pressed="false"
+              aria-label="Start focus automatically"></button>
           </div>
         </section>
 
-        <section class="block">
-          <div class="block-head">
-            <span class="idx">04</span>
-            <h2 class="block-title">Today</h2>
+        <section class="card reveal" aria-labelledby="h-today">
+          <div class="card-head">
+            <span class="idx caption-3">04</span>
+            <h2 class="card-title title-5" id="h-today">Today</h2>
           </div>
 
           <div class="stat-grid">
             <div class="stat">
               <span class="stat-n accent" id="stat-sessions">0</span>
-              <span class="stat-l">Sessions</span>
+              <span class="stat-l caption-5">Sessions</span>
             </div>
             <div class="stat">
               <span class="stat-n" id="stat-minutes">0</span>
-              <span class="stat-l">Minutes</span>
+              <span class="stat-l caption-5">Minutes</span>
             </div>
           </div>
 
           <div class="chart" id="chart"></div>
-          <p class="chart-label">Last seven days</p>
+          <p class="chart-label caption-5">Last seven days</p>
         </section>
-      </div>
+      </aside>
     </main>
 
+    <!-- ─── Tagline reveal (B11) ──────────────────────── -->
+    <section class="tagline" id="tagline" aria-label="About 間">
+      <p class="tagline-text heading-3" id="tagline-text">Work in one breath, then rest in another.
+        間 is the pause that makes the work count.</p>
+    </section>
+
     <footer class="footer">
-      <blockquote class="quote">
-        <p class="quote-text" id="quote-text"></p>
-        <cite class="quote-author" id="quote-author"></cite>
+      <blockquote class="quote reveal">
+        <p class="quote-text body-3" id="quote-text"></p>
+        <cite class="quote-author caption-4" id="quote-author"></cite>
       </blockquote>
-      <p class="colophon"><span class="colophon-kanji">間</span> The meaningful pause between. Work in one breath, then rest in another.</p>
+      <p class="colophon caption-5">
+        <span class="colophon-kanji" aria-hidden="true">間</span>
+        No account, no tracking, no server. Your sessions and tasks stay in this browser.
+      </p>
     </footer>
 
   </div>
