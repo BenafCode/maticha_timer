@@ -6,8 +6,8 @@ const STORE = 'ma_timer_v1';
 
 const MODES = {
   focus: { label: 'Focus',       phrase: 'one breath of work', tint: 'var(--accent)' },
-  short: { label: 'Short break', phrase: 'rest, lightly',      tint: 'var(--text-muted)' },
-  long:  { label: 'Long break',  phrase: 'step away',          tint: 'var(--text-muted)' },
+  short: { label: 'Short break', phrase: 'rest, lightly',      tint: 'var(--muted)' },
+  long:  { label: 'Long break',  phrase: 'step away',          tint: 'var(--muted)' },
 };
 
 const DEFAULTS = {
@@ -130,6 +130,13 @@ const taskList     = document.getElementById('task-list');
 const taskEmpty    = document.getElementById('task-empty');
 const taskForm     = document.getElementById('task-form');
 const taskError    = document.getElementById('task-error');
+const greetingText = document.getElementById('greeting-text');
+const greetingDate = document.getElementById('greeting-date');
+const statTasks    = document.getElementById('stat-tasks');
+const tileStreakC  = document.getElementById('tile-streak-c');
+const tileTasksC   = document.getElementById('tile-tasks-c');
+const tileSessionsC = document.getElementById('tile-sessions-c');
+const phaseChip    = document.getElementById('phase-chip');
 const toggleLabel  = document.getElementById('toggle-label');
 const themeBtn     = document.getElementById('theme-btn');
 const taskInput    = document.getElementById('task-input');
@@ -180,7 +187,9 @@ function renderTasks() {
 
   if (tasks.length === 0) {
     taskSummary.textContent = '';
+    taskSummary.hidden = true;
   } else {
+    taskSummary.hidden = false;
     const mins = remainingPomos * state.durations.focus;
     const time = mins >= 60
       ? `${Math.floor(mins / 60)}h ${mins % 60 ? (mins % 60) + 'm' : ''}`.trim()
@@ -249,6 +258,20 @@ function render() {
 
   // Streak
   streakCount.textContent = streak;
+  tileStreakC.textContent = streak === 0 ? 'No days yet'
+    : streak === 1 ? 'One day running' : `${numberWord(streak)} days running`;
+
+  // Tasks left, and the greeting that names today's one fact
+  const openTasks = state.tasks.filter(t => !t.done);
+  const leftPomos = openTasks.reduce((sum, t) => sum + Math.max(0, t.est - t.count), 0);
+  statTasks.textContent = openTasks.length;
+  tileTasksC.textContent = openTasks.length === 0 ? 'Nothing named yet'
+    : `${leftPomos} interval${leftPomos === 1 ? '' : 's'} to go`;
+
+  tileSessionsC.textContent = (stats[todayKey()] || 0) === 0
+    ? 'Ready when you are' : 'Each one a full interval';
+  phaseChip.textContent = M.label;
+  renderGreeting(running);
 
   // Stats
   const tk = todayKey();
@@ -520,6 +543,61 @@ taskClear.addEventListener('click', () => {
   render();
 });
 
+// ─── The greeting ─────────────────────────────────────────────
+const WORDS = ['zero','one','two','three','four','five','six','seven','eight',
+               'nine','ten','eleven','twelve'];
+
+/** Small counts read better as words in a sentence than as digits. */
+function numberWord(n) {
+  return n >= 0 && n < WORDS.length ? WORDS[n] : String(n);
+}
+
+/** The count word often opens the greeting's second sentence. */
+function sentenceCase(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function partOfDay() {
+  const h = new Date().getHours();
+  return h < 12 ? 'Morning' : h < 18 ? 'Afternoon' : 'Evening';
+}
+
+/**
+ * The h1 names this person and today's one fact, taken from the data. It is
+ * kept short so it still sets in two lines at every width; the detail and the
+ * date go in the grey line underneath, never as an eyebrow above.
+ */
+function renderGreeting(running) {
+  const part = partOfDay();
+  const done = state.stats[todayKey()] || 0;
+  const task = activeTask();
+
+  let line;
+  if (running && state.mode === 'focus' && task) {
+    const short = task.text.length > 28 ? task.text.slice(0, 27).trimEnd() + '…' : task.text;
+    line = `${part}. On ${short}`;
+  } else if (running && state.mode === 'focus') {
+    line = `${part}. The interval is running.`;
+  } else if (running) {
+    line = `${part}. Resting until the next one.`;
+  } else if (done === 0) {
+    line = `${part}. Ready when you are.`;
+  } else if (done === 1) {
+    line = `${part}. One interval done.`;
+  } else {
+    line = `${part}. ${sentenceCase(numberWord(done))} intervals done.`;
+  }
+  greetingText.textContent = line;
+
+  const d = new Date();
+  const date = d.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
+  const mins = done * state.durations.focus;
+  const fact = done === 0
+    ? `the first interval is ${state.durations.focus} minutes`
+    : `${mins} minute${mins === 1 ? '' : 's'} of focus so far`;
+  greetingDate.textContent = `${date} · ${fact}`;
+}
+
 // ─── B9 inline form errors ────────────────────────────────────
 function showTaskError(message) {
   taskError.textContent = message;
@@ -585,6 +663,7 @@ syncThemeButton();
  * runs still shows everything.
  */
 function armReveals() {
+  document.querySelectorAll('.panel, .tile, .quote').forEach(el => el.classList.add('reveal'));
   const items = document.querySelectorAll('.reveal');
   if (!items.length || !('IntersectionObserver' in window)) return;
 
