@@ -485,3 +485,68 @@ body {
   .task-est { display: none; }
   .meta-row { gap: var(--u); }
 }
+
+/* ─── Short viewports ───────────────────────────────────────── */
+/* A window tiled into a quarter of a small laptop (≈640×400) is wider
+   than it is tall, so the binding constraint is height, not width.
+   Compress the vertical rhythm and scale the numerals off viewport
+   height so the timer and its controls stay above the fold. Scoped
+   with min-width so portrait phones keep the regular treatment. */
+
+@media (min-width: 480px) and (max-height: 620px) {
+  .page { padding-top: var(--u2); padding-bottom: var(--u2); }
+
+  .masthead { padding-bottom: 10px; }
+  .mark     { font-size: 21px; }
+  .kanji    { font-size: 16px; }
+  .streak-n { font-size: 21px; }
+
+  .block      { padding-top: var(--u2); padding-bottom: var(--u3); }
+  .block-head { padding-bottom: 8px; margin-bottom: 14px; }
+
+  .modes { margin-bottom: 14px; }
+  .time {
+    font-size: clamp(40px, 13vh, 88px);
+    margin-bottom: 14px;
+  }
+  .progress-track { margin-bottom: 10px; }
+  /* the phase line and session row wrap at these widths — keep the two
+     rows tight rather than inheriting the full column gap */
+  .meta-row { gap: 5px var(--u2); margin-bottom: 16px; }
+  .btn { padding: 10px var(--u2); }
+
+  .set-row { padding: 10px 0; }
+  .task    { padding-top: 10px; padding-bottom: 10px; }
+  .stat-n  { font-size: 30px; }
+  .chart-bars { height: 52px; }
+}
+
+/* Quarter of a 1366×768 panel leaves ~384px of height. */
+@media (min-width: 480px) and (max-height: 430px) {
+  .page { padding-top: 12px; }
+  .mast-tag { display: none; }
+  .masthead { padding-bottom: 8px; }
+  .block { padding-top: 12px; padding-bottom: var(--u2); }
+  .block-head { margin-bottom: 10px; }
+  .modes { margin-bottom: 10px; }
+  .time { font-size: clamp(38px, 15vh, 64px); margin-bottom: 10px; }
+  .meta-row { margin-bottom: 12px; }
+}
+
+/* A short window still has width to spend, so put the columns back
+   rather than stacking — stacking is what made a quarter-tile scroll
+   four screens deep. Narrower main column than on the desktop grid,
+   since the numerals are small here. */
+@media (min-width: 600px) and (max-height: 620px) {
+  .grid,
+  .footer { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
+
+  .col-side {
+    border-left: 1px solid var(--rule);
+    border-top: 0;
+    margin-left: -1px;
+  }
+  .col-main .block { padding-left: 0; padding-right: var(--u3); }
+  .col-side .block { padding-left: var(--u3); padding-right: 0; }
+  .col-main .block:last-child { border-bottom: 0; }
+}
