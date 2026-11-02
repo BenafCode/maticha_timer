@@ -2,16 +2,38 @@
 
 Third-party Claude Code skills vendored into this repo.
 
-| Skill | Source | License |
-|---|---|---|
-| `landing-page-design` | [elayadesign/ai-design-skills](https://github.com/elayadesign/ai-design-skills) | MIT |
-| `figma-designer` | [elayadesign/ai-design-skills](https://github.com/elayadesign/ai-design-skills) | MIT |
+| Skill | Source | License | Role |
+|---|---|---|---|
+| `landing-page-design` | [elayadesign/ai-design-skills](https://github.com/elayadesign/ai-design-skills) | MIT | The rules: type scale, spacing tokens, radius, motion, ship list |
+| `taste-skill` (`design-taste-frontend`) | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | MIT | The directions: a researched library of styles, palettes, type pairings and blueprints |
+| `redesign-existing-projects` | [elayadesign/redesign-skill](https://github.com/elayadesign/redesign-skill) | MIT | The diagnostic: audits an existing interface and fixes in place |
+| `figma-designer` | [elayadesign/ai-design-skills](https://github.com/elayadesign/ai-design-skills) | MIT | Figma work, needs the Figma MCP (not connected in cloud sessions) |
 
-Installed from commit `456d9e0` of that repo. To refresh:
+Installed from commit `456d9e0` of `ai-design-skills`, `12af471` of `taste-skill` and
+`7df13f6` of `redesign-skill`. To refresh:
 
 ```bash
 npx skills add elayadesign/ai-design-skills
+npx skills add Leonxlnx/taste-skill
 ```
+
+## How they fit together
+
+`landing-page-design` is the constraint layer and the one the app is currently
+built on; its values are enforced by the Playwright compliance suite. `taste-skill`
+is the creative layer: it deals a researched direction rather than letting a model
+reach for the category default. They conflict hardest at type — the first permits
+four families, the second deals from forty four pairings, and the two sets do not
+overlap at all. Decide precedence before combining them, and prefer `--keep palette,type`
+on a taste-skill draw so it deals composition only.
+
+Note that `taste-skill` routes app screens (dashboards, settings, anything worked
+in rather than read) through `references/app-screens.md`, which has its own run and
+its own house rules. This timer is an app screen, not a page.
+
+`taste-skill/scripts/assets.mjs` makes outbound calls to Openverse, Wikimedia
+Commons and the Art Institute of Chicago to fetch openly licensed photography. The
+other scripts are local only.
 
 ## Note on this app
 

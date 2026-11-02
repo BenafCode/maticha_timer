@@ -24,37 +24,56 @@ meaningful interval, the pause that gives shape to the work around it.
 
 ## Design
 
-Swiss typographic discipline applied to a Japanese idea: a strict grid, a
-single grotesque at a few decisive sizes, and a palette of ink, paper and one
-signal red. No ornament, no shadows. Structure carries the design, and the
-empty space is the point.
+The art direction is **Editorial greeting**, dealt from taste-skill's app screen
+library (seed `186861371`, kind `workspace`) and recorded in `.taste-skill/`. It is
+a personal home that opens with a typeset greeting naming today's one fact, taken
+from the data rather than written in advance:
 
-The visual system follows Part B of the `landing-page-design` skill vendored in
-[`.claude/skills`](.claude/skills), which fixes the values rather than leaving
-them to taste:
+> Evening. Four intervals done.
+> Monday, November 2 · 100 minutes of focus so far
 
-| | |
-|---|---|
-| Type | Geist, with Geist Mono for the countdown, stats and streak. Every size lands on a step of the Tailwind type scale, and every text element wears one of the named styles (`heading-3`, `body-6`, `caption-5`, …) defined once in `styles.css`. |
-| Spacing | The thirteen spacing tokens, `--space-0` through `--space-900`. Nothing between them. |
-| Radius | Tailwind radius values. Cards sit at 12px; the nested formula (inner = outer − gap) lands below 2 at every inner gap here, so the controls inside stay square. |
-| Surface | Flat fills, borders all the way around a card, row divisions drawn as 1px rectangles rather than one sided strokes. Dark mode draws only from the six approved backgrounds. |
-| Colour | One gradient on the whole page: black to grey across the countdown, white to grey in dark mode. Backgrounds are never gradients. |
-| Motion | One curve, `cubic-bezier(0.22, 1, 0.36, 1)`. Only `transform` and `opacity` animate, so the progress bar scales rather than growing in width and the chart bars scale rather than changing height. `prefers-reduced-motion` drops the movement. |
-| Icons | Inline SVG drawn in Phosphor's idiom (256 grid, 16px round strokes) rather than pulled from the package, to keep the zero dependency rule. |
+Below it, four count tiles and then panels on a real 12 column grid: 1100px of
+content, 77px tracks, 16px gutters (`1100 − 11×16 = 924`, `924 ÷ 12 = 77`). Spans
+change by row but share column lines — 3/3/3/3, then 9/3, then 6/6 — so every
+internal edge meets one above it. Figures sit at regular weight on tonal panels,
+and the one white inner card the style allows is spent on the chart.
+
+The rules underneath are Part B of `landing-page-design`, and where the two
+disagree the rules win. Each substitution is recorded at the point of use in
+`styles.css`:
+
+| The sheet | The rules | Shipped |
+|---|---|---|
+| greeting 48/700 in a serif | one face, cap at semibold | 48/600 in Geist |
+| figures at 32px | Tailwind scale only | 30px, the step below |
+| card radius 22px | Tailwind radius values | 24px |
+| panel padding 20px | the spacing tokens | 24px |
+
+The red is gone. It was not a taste call: this style's research bans red as an
+accent outright, having found that red marking good news reads as an alarm. The
+accent is now a deep teal, and red survives only on the failing fact.
 
 Both themes ship. The page follows the operating system until you press the
-switch in the masthead, after which your choice is remembered.
+switch, after which your choice is remembered. Dark grounds are drawn only from
+the six the rules permit.
+
+**One stated deviation.** The sheet asks for panels in reading order on small
+screens. That order puts the greeting and four tiles above the countdown, which
+leaves the primary action below the fold on a tiled window or a short phone, and
+B10 requires it on the first screen. The timer therefore rises above the tiles
+while the window cannot hold both, and reading order returns as soon as there is
+room.
 
 ### Verifying it
 
 The system is enforced by test rather than by discipline. Two Playwright suites
-cover it: one walks every rendered element and fails on a font size outside the
+cover it. One walks every rendered element and fails on a font size outside the
 scale, a padding or margin outside the spacing tokens, an off scale radius, a
-partial card border, a banned typeface, an animated `width` or `height`, or a
-browser default easing curve; the other drives the timer, the task list and
-persistence. The layout is audited across fourteen viewports for horizontal
-overflow and for the primary action staying above the fold.
+partial card border, a banned typeface, an animated `width` or `height`, a browser
+default easing curve, a column track that is not 77px, or an accent that reads as
+red. The other drives the timer, the task list and persistence. The layout is
+audited across fourteen viewports for horizontal overflow and for the primary
+action staying above the fold.
 
 ## Running it
 

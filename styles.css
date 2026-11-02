@@ -1,21 +1,20 @@
 /* ============================================================
    MA · 間 — Maticha Focus Timer
-   Visual system per the landing-page-design skill, Part B.
 
-   B1 type    Geist, with Geist Mono for the countdown and metrics
-              (numeric UI, the one pairing the skill permits).
-              Every size resolves to a Tailwind scale step; every
-              text element wears a named style class.
-   B2 space   The thirteen spacing tokens, nothing between them.
-   B3 radius  Tailwind radius values. Cards sit at 12px; the nested
-              formula (inner = outer − gap) lands below 2 at every
-              inner gap here, so inner controls stay square.
-   B4 surface Flat backgrounds, borders all the way around a card,
-              row divisions drawn as 1px rectangles.
-   B7 motion  One curve, transform and opacity only.
+   Art direction: "Editorial greeting", dealt from taste-skill's
+   app-screen library (seed 186861371, kind: workspace). A personal
+   home that opens with a typeset greeting in a centred column;
+   every figure below it is set at regular weight on tonal panels.
+
+   Rules: Part B of landing-page-design. Where the two disagree the
+   rules win, and the substitution is noted at the point of use:
+     greeting 48/700 in a serif  ->  48/600 in Geist (one face only)
+     KPI figures at 32px         ->  30px, the step below
+     card radius 22px            ->  24px, the Tailwind value
+     panel padding 20px          ->  24px, the spacing token
+   The style's own ban on red as an accent is what retired the red.
    ============================================================ */
 
-/* ─── Tokens ───────────────────────────────────────────────── */
 :root {
   /* B2 — spacing */
   --space-0:   0;
@@ -40,7 +39,13 @@
   --radius-lg:   8px;
   --radius-xl:   12px;
   --radius-2xl:  16px;
+  --radius-3xl:  24px;
   --radius-full: 9999px;
+
+  /* The sheet's card radius is 22px and its control radius 999px.
+     22 is not a Tailwind value, so cards take 24; controls are pills. */
+  --radius-card: var(--radius-3xl);
+  --radius-control: var(--radius-full);
 
   /* B1 — type scale */
   --text-xs:   12px;  --lh-xs:   16px;
@@ -71,36 +76,53 @@
   --dur-color: 300ms;
   --dur-reveal: 700ms;
 
-  /* Colour — light */
-  --bg: #FAFAF7;
-  --surface: #FFFFFF;
-  --surface-2: #F1F1EC;
-  --border: #E4E4DF;
-  --border-firm: #D5D5CE;
-  --text: #111110;
-  --text-muted: #55554F;
-  --text-subtle: #8A8A82;
-  --accent: #E2231A;
-  --on-accent: #FFFFFF;
+  /* Geometry measured on the studied screens */
+  --row-height: 63px;
+  --control-height: 38px;
+  --tile-height: 128px;
+  --col-gap: var(--space-200);
+
+  /* Colour — light. The ground stays white and the panel surface takes
+     the product's material: a warm washi stone in place of #f9f9f9. */
+  --ground: #ffffff;
+  --surface: #f6f5f1;
+  --raised: #ffffff;
+  --border: #eaeae6;
+  --rule: #f3f3ef;
+  --control: #d9d9d6;
+  --text: #1f201d;
+  --muted: #636361;
+  --subtle: #8c8c88;
+  --accent: #1b6e66;
+  --on-accent: #ffffff;
+  --negative: #b42318;
+  --chart-1: #1f201d;
+  --chart-2: #1b6e66;
+  --chart-3: #c9c9c3;
   --hero-from: #000000;
   --hero-to: #666666;
-  --ring: #111110;
+  --ring: #1f201d;
 }
 
-/* B4 — dark backgrounds come only from the approved six:
+/* B4 — dark grounds come only from the approved six:
    #000000 #181818 #1F1F1F #272727 #313131 #131209 */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #131209;
+    --ground: #131209;
     --surface: #181818;
-    --surface-2: #1F1F1F;
+    --raised: #1F1F1F;
     --border: #272727;
-    --border-firm: #313131;
+    --rule: #1F1F1F;
+    --control: #313131;
     --text: #FAFAF7;
-    --text-muted: #9B9B9B;
-    --text-subtle: #7A7A74;
-    --accent: #FF6A5E;
+    --muted: #9B9B9B;
+    --subtle: #7A7A74;
+    --accent: #5FBFB3;
     --on-accent: #131209;
+    --negative: #F0877E;
+    --chart-1: #FAFAF7;
+    --chart-2: #5FBFB3;
+    --chart-3: #313131;
     --hero-from: #FFFFFF;
     --hero-to: #9B9B9B;
     --ring: #FAFAF7;
@@ -108,16 +130,21 @@
 }
 
 :root[data-theme="dark"] {
-  --bg: #131209;
+  --ground: #131209;
   --surface: #181818;
-  --surface-2: #1F1F1F;
+  --raised: #1F1F1F;
   --border: #272727;
-  --border-firm: #313131;
+  --rule: #1F1F1F;
+  --control: #313131;
   --text: #FAFAF7;
-  --text-muted: #9B9B9B;
-  --text-subtle: #7A7A74;
-  --accent: #FF6A5E;
+  --muted: #9B9B9B;
+  --subtle: #7A7A74;
+  --accent: #5FBFB3;
   --on-accent: #131209;
+  --negative: #F0877E;
+  --chart-1: #FAFAF7;
+  --chart-2: #5FBFB3;
+  --chart-3: #313131;
   --hero-from: #FFFFFF;
   --hero-to: #9B9B9B;
   --ring: #FAFAF7;
@@ -128,8 +155,7 @@
 
 /* Buttons otherwise keep the UA's 1px/6px padding, which squeezes small
    fixed-size controls narrower than their centred contents — an overflowing
-   grid item is pinned to the start edge instead of centring. Rules that set
-   their own padding still win on specificity. */
+   grid item is pinned to the start edge instead of centring. */
 button { padding: 0; }
 
 /* Form controls do not inherit the page face, so an icon only button would
@@ -140,11 +166,11 @@ html { -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--ground);
   color: var(--text);
   font-family: var(--sans);
-  font-size: var(--text-base);
-  line-height: var(--lh-base);
+  font-size: var(--text-sm);
+  line-height: var(--lh-sm);
   font-weight: var(--w-regular);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -199,163 +225,172 @@ i, em, cite, address, blockquote { font-style: normal; }
   z-index: 10;
   padding: var(--space-75) var(--space-100);
   background: var(--text);
-  color: var(--bg);
-  border-radius: var(--radius-md);
+  color: var(--ground);
+  border-radius: var(--radius-control);
   text-decoration: none;
   transform: translateY(calc(-1 * var(--space-900)));
   transition: transform var(--dur-layout) var(--curve);
 }
 .skip-link:focus-visible { transform: none; }
 
-/* ─── Icons ────────────────────────────────────────────────── */
-.icon {
-  width: var(--text-base);
-  height: var(--text-base);
-  flex: none;
-  display: block;
-}
+.icon { width: var(--text-base); height: var(--text-base); flex: none; display: block; }
 
-/* ─── Page shell ───────────────────────────────────────────── */
+/* ─── Page shell: open plane, centred column, no top bar ───── */
+/* The sheet's column is 1100px of CONTENT, which is what makes the tracks
+   77px (1100 - 11x16 = 924, 924/12 = 77). The page's own gutter therefore
+   sits outside that figure rather than eating into it. */
 .page {
-  max-width: 1120px;
+  --column: 1100px;
+  max-width: calc(var(--column) + 2 * var(--space-300));
   margin: 0 auto;
-  padding: var(--space-600) var(--space-200) var(--space-700);
+  padding: var(--space-400) var(--space-300) var(--space-700);
 }
 
-/* ─── Masthead ─────────────────────────────────────────────── */
-.masthead {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+.greeting-head {
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-300);
-  margin-bottom: var(--space-400);
+  margin-bottom: var(--space-700);
 }
 
-.mast-id { display: flex; align-items: baseline; gap: var(--space-75); }
+.brand { display: flex; align-items: baseline; gap: var(--space-75); }
 
 .mark {
-  font-size: var(--text-2xl);
-  line-height: var(--lh-2xl);
+  font-size: var(--text-base);
+  line-height: var(--lh-base);
   font-weight: var(--w-semibold);
-  letter-spacing: -0.02em;
+  letter-spacing: 0.08em;
 }
 
 .kanji {
   font-family: var(--jp);
-  font-size: var(--text-xl);
-  line-height: var(--lh-xl);
-  font-weight: var(--w-regular);
+  font-size: var(--text-base);
+  line-height: var(--lh-base);
   color: var(--accent);
 }
 
-.mast-tag { margin: 0; color: var(--text-subtle); text-wrap: pretty; }
-
-.mast-end { display: flex; align-items: center; gap: var(--space-300); }
-
-.mast-streak { display: flex; align-items: center; gap: var(--space-75); }
-
-.streak-n {
-  font-family: var(--mono);
-  font-size: var(--text-2xl);
-  line-height: var(--lh-2xl);
-  font-weight: var(--w-semibold);
-  font-variant-numeric: tabular-nums;
-}
-
-.streak-l { color: var(--text-subtle); }
-
 .icon-btn {
-  width: var(--space-400);
-  height: var(--space-400);
+  width: var(--control-height);
+  height: var(--control-height);
   display: grid;
   place-items: center;
   background: var(--surface);
-  color: var(--text-muted);
+  color: var(--muted);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-control);
   cursor: pointer;
   transition: color var(--dur-color) var(--curve),
               background-color var(--dur-color) var(--curve),
-              border-color var(--dur-color) var(--curve),
               transform var(--dur-layout) var(--curve);
 }
-.icon-btn:hover { color: var(--text); border-color: var(--border-firm); }
+.icon-btn:hover { color: var(--text); }
 .icon-btn:active { transform: scale(0.98); }
 
-/* ─── Grid ─────────────────────────────────────────────────── */
-.grid {
+/* ─── The 12 column grid: 1100 − 11×16 = 924, ÷ 12 = 77px ──── */
+.home {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-  gap: var(--space-300);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--col-gap);
   align-items: start;
 }
 
-.col-main, .col-side {
-  display: grid;
-  gap: var(--space-300);
-  align-content: start;
-  /* A grid item's automatic minimum is its min-content width, so without this
-     the column refuses to shrink past its widest row and pushes the page wide. */
-  min-width: 0;
+.span-3  { grid-column: span 3; }
+.span-6  { grid-column: span 6; }
+.span-9  { grid-column: span 9; }
+.span-12 { grid-column: span 12; }
+
+/* ─── The greeting: this screen's h1 ───────────────────────── */
+.greeting { margin-bottom: var(--space-400); }
+
+.greeting-text {
+  margin: 0 0 var(--space-75);
+  max-width: 680px;            /* B5 */
+  text-wrap: balance;
+  /* B5 — the one gradient on the page, and only on text */
+  background-image: linear-gradient(90deg, var(--hero-from), var(--hero-to));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
-/* ─── B4 card: border all the way around, flat fill ────────── */
-.card {
+/* The date goes after the greeting, never as a tracked eyebrow above it. */
+.greeting-date { margin: 0; max-width: 680px; color: var(--muted); text-wrap: pretty; }
+
+/* ─── Count tiles: label, value, a plain caption, no deltas ── */
+.tile {
+  min-height: var(--tile-height);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-50);
+  padding: var(--space-200);
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: var(--space-300);
+  border-radius: var(--radius-card);
 }
 
-.card-head {
+.tile-l { color: var(--muted); }
+
+.tile-v {
+  margin-top: auto;
+  font-family: var(--mono);
+  font-size: var(--text-3xl);        /* the sheet's 32px, snapped to the step below */
+  line-height: var(--lh-3xl);
+  font-weight: var(--w-regular);     /* every figure at regular weight */
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.tile-c { color: var(--subtle); text-wrap: pretty; }
+
+/* ─── Panels: one tonal layer, title and content directly ──── */
+.panel {
+  padding: var(--space-300);
+  background: var(--surface);
+  border-radius: var(--radius-card);
+}
+
+.panel-head {
   display: flex;
   align-items: baseline;
-  gap: var(--space-75);
+  justify-content: space-between;
+  gap: var(--space-200);
   margin-bottom: var(--space-300);
 }
 
-.idx { color: var(--accent); letter-spacing: 0.08em; }
-
-.card-title {
+.panel-title {
   margin: 0;
-  color: var(--text-subtle);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: var(--text-sm);
+  line-height: var(--lh-sm);
+  font-weight: var(--w-semibold);
   text-wrap: balance;
 }
 
-/* ─── Modes ────────────────────────────────────────────────── */
-.modes {
-  display: flex;
-  gap: var(--space-50);
-  margin-bottom: var(--space-300);
-}
-
-.mode {
-  flex: 1;
-  padding: var(--space-75) var(--space-100);
-  background: transparent;
-  color: var(--text-subtle);
-  font-family: inherit;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  cursor: pointer;
+.chip {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
-  transition: color var(--dur-color) var(--curve),
-              background-color var(--dur-color) var(--curve),
-              border-color var(--dur-color) var(--curve),
-              transform var(--dur-layout) var(--curve);
-}
-.mode:hover { color: var(--text); border-color: var(--border-firm); }
-.mode:active { transform: scale(0.98); }
-.mode.is-active {
-  background: var(--surface-2);
-  border-color: var(--border-firm);
-  color: var(--text);
+  padding: var(--space-25) var(--space-75);
+  background: var(--raised);
+  color: var(--muted);
+  border-radius: var(--radius-control);
 }
 
-/* ─── B5 hero: the countdown, capped at 680px ──────────────── */
-.hero { max-width: 680px; }
+.panel-foot { display: flex; justify-content: flex-end; padding-top: var(--space-200); }
+
+.link-btn {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color var(--dur-color) var(--curve);
+}
+.link-btn:hover { color: var(--accent); }
+
+/* ─── Interval ─────────────────────────────────────────────── */
+.interval-body { display: flex; flex-direction: column; }
 
 .time {
   display: flex;
@@ -363,26 +398,17 @@ i, em, cite, address, blockquote { font-style: normal; }
   font-family: var(--mono);
   font-size: var(--text-9xl);
   line-height: 1;
-  font-weight: var(--w-semibold);
+  font-weight: var(--w-regular);   /* the style sets every figure at regular */
   letter-spacing: -0.04em;
   font-variant-numeric: tabular-nums;
   user-select: none;
   margin-bottom: var(--space-300);
-
-  /* B5 — the one gradient, and only on text */
-  background-image: linear-gradient(90deg, var(--hero-from), var(--hero-to));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
 }
 
-/* The colon stays inside the gradient. An opacity of its own would promote it
-   to its own layer, and a layer cannot be painted from the parent's text
-   clipped background, so it would disappear entirely. The running state shows
-   on the session dot below instead, which sits outside the clipped text. */
-.time .c { color: inherit; }
+/* The colon carries no opacity of its own: that would promote it to its own
+   layer, and the running state is shown on the session dots instead. */
+.time .c { color: var(--subtle); }
 
-/* ─── Progress ─────────────────────────────────────────────── */
 .progress-track {
   height: var(--space-25);
   background: var(--border);
@@ -401,93 +427,97 @@ i, em, cite, address, blockquote { font-style: normal; }
   transition: transform var(--dur-layout) var(--curve);
 }
 
-.meta-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--space-50) var(--space-200);
-  margin-bottom: var(--space-300);
-}
+.phase { margin: 0 0 var(--space-300); color: var(--muted); text-wrap: pretty; }
 
-.phase { margin: 0; color: var(--text-muted); text-wrap: pretty; }
-
-.session { display: flex; align-items: center; gap: var(--space-75); }
-
-.dots { display: flex; gap: var(--space-50); }
-
-.dot {
-  width: var(--space-75);
-  height: var(--space-75);
-  border: 1px solid var(--border-firm);
-  border-radius: var(--radius-full);
-  transition: background-color var(--dur-color) var(--curve),
-              border-color var(--dur-color) var(--curve);
-}
-.dot.done { background: var(--text-muted); border-color: var(--text-muted); }
-.dot.current { background: var(--accent); border-color: var(--accent); }
-.dots.running .dot.current { animation: pulse 2s var(--curve) infinite; }
-
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
-
-.lab { color: var(--text-subtle); }
-
-/* ─── Controls ─────────────────────────────────────────────── */
 .controls { display: flex; gap: var(--space-75); }
 
 /* B2 — main buttons: 8px vertical, 12px horizontal */
 .btn {
-  flex: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-75);
-  padding: var(--space-75) var(--space-100);
-  background: var(--surface);
+  min-height: var(--control-height);
+  padding: var(--space-75) var(--space-300);
+  background: var(--raised);
   color: var(--text);
-  font-family: inherit;
-  border: 1px solid var(--border-firm);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
   cursor: pointer;
   transition: color var(--dur-color) var(--curve),
               background-color var(--dur-color) var(--curve),
               border-color var(--dur-color) var(--curve),
               transform var(--dur-layout) var(--curve);
 }
-.btn:hover { background: var(--surface-2); }
+.btn:hover { border-color: var(--control); }
 .btn:active { transform: scale(0.98); }
 
+/* Primary by inversion, the way the studied screens mark it */
 .btn-primary {
   background: var(--text);
-  color: var(--bg);
+  color: var(--ground);
   border-color: var(--text);
 }
 .btn-primary:hover { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 
-/* ─── Tasks ────────────────────────────────────────────────── */
-.task-list { list-style: none; margin: 0; padding: 0; }
+/* ─── Session ──────────────────────────────────────────────── */
+.modes { display: flex; flex-direction: column; gap: var(--space-50); margin-bottom: var(--space-300); }
 
+.mode {
+  min-height: var(--control-height);
+  padding: var(--space-75) var(--space-100);
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  text-align: left;
+  transition: color var(--dur-color) var(--curve),
+              background-color var(--dur-color) var(--curve),
+              transform var(--dur-layout) var(--curve);
+}
+.mode:hover { color: var(--text); }
+.mode:active { transform: scale(0.98); }
+.mode.is-active { background: var(--raised); color: var(--text); }
+
+.session-meter { display: flex; flex-direction: column; gap: var(--space-75); }
+
+.dots { display: flex; gap: var(--space-50); }
+
+.dot {
+  width: var(--space-75);
+  height: var(--space-75);
+  border: 1px solid var(--control);
+  border-radius: var(--radius-full);
+  transition: background-color var(--dur-color) var(--curve),
+              border-color var(--dur-color) var(--curve);
+}
+.dot.done { background: var(--muted); border-color: var(--muted); }
+.dot.current { background: var(--accent); border-color: var(--accent); }
+.dots.running .dot.current { animation: pulse 2s var(--curve) infinite; }
+
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+.lab { color: var(--subtle); text-wrap: pretty; }
+
+/* ─── Tasks ────────────────────────────────────────────────── */
+.task-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-75); }
+
+/* Row cards: one step lighter than the panel, a border one step darker */
 .task {
-  position: relative;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto auto auto;
   align-items: center;
   gap: var(--space-100);
-  padding: var(--space-100) var(--space-0);
+  min-height: var(--row-height);
+  padding: var(--space-75) var(--space-200);
+  background: var(--raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  transition: border-color var(--dur-color) var(--curve);
 }
 
-/* B4 — rows are divided by a 1px rectangle, not a one sided stroke */
-.task::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1px;
-  background: var(--border);
-}
-.task:last-child::after { display: none; }
-
+.task.is-active { border-color: var(--accent); }
 .task.is-active .task-text { color: var(--text); font-weight: var(--w-medium); }
 .task.done { opacity: 0.45; }
 .task.done .task-text { text-decoration: line-through; }
@@ -499,7 +529,7 @@ i, em, cite, address, blockquote { font-style: normal; }
   place-items: center;
   background: transparent;
   color: transparent;
-  border: 1px solid var(--border-firm);
+  border: 1px solid var(--control);
   border-radius: var(--radius-full);
   cursor: pointer;
   transition: border-color var(--dur-color) var(--curve),
@@ -510,11 +540,7 @@ i, em, cite, address, blockquote { font-style: normal; }
 .task-check:hover { border-color: var(--text); }
 .task-check:active { transform: scale(0.98); }
 .task-check .icon { width: var(--text-sm); height: var(--text-sm); }
-.task.done .task-check {
-  background: var(--text);
-  border-color: var(--text);
-  color: var(--bg);
-}
+.task.done .task-check { background: var(--text); border-color: var(--text); color: var(--ground); }
 
 .task-text {
   min-width: 0;
@@ -522,10 +548,9 @@ i, em, cite, address, blockquote { font-style: normal; }
   border: 0;
   padding: 0;
   text-align: left;
-  font-family: inherit;
   font-size: var(--text-sm);
   line-height: var(--lh-sm);
-  color: var(--text-muted);
+  color: var(--muted);
   cursor: pointer;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -539,7 +564,7 @@ i, em, cite, address, blockquote { font-style: normal; }
   font-size: var(--text-xs);
   line-height: var(--lh-xs);
   font-variant-numeric: tabular-nums;
-  color: var(--text-subtle);
+  color: var(--subtle);
 }
 
 .task-est { display: flex; gap: var(--space-25); }
@@ -551,15 +576,15 @@ i, em, cite, address, blockquote { font-style: normal; }
   display: grid;
   place-items: center;
   background: transparent;
-  color: var(--text-subtle);
+  color: var(--subtle);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-control);
   cursor: pointer;
   transition: color var(--dur-color) var(--curve),
               border-color var(--dur-color) var(--curve),
               transform var(--dur-layout) var(--curve);
 }
-.task-est button:hover, .step-btn:hover { color: var(--text); border-color: var(--border-firm); }
+.task-est button:hover, .step-btn:hover { color: var(--text); border-color: var(--control); }
 .task-est button:active, .step-btn:active { transform: scale(0.98); }
 .task-est .icon, .step-btn .icon { width: var(--text-xs); height: var(--text-xs); }
 
@@ -569,188 +594,71 @@ i, em, cite, address, blockquote { font-style: normal; }
   display: grid;
   place-items: center;
   background: transparent;
-  color: var(--text-subtle);
+  color: var(--subtle);
   border: 1px solid transparent;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-control);
   cursor: pointer;
   transition: color var(--dur-color) var(--curve),
-              border-color var(--dur-color) var(--curve),
               transform var(--dur-layout) var(--curve);
 }
-.task-del:hover { color: var(--accent); border-color: var(--border); }
+.task-del:hover { color: var(--negative); }
 .task-del:active { transform: scale(0.98); }
 .task-del .icon { width: var(--text-sm); height: var(--text-sm); }
 
 /* B9 — a composed empty state, not a blank panel */
-.task-empty {
-  padding: var(--space-200) var(--space-0) var(--space-300);
-}
+.task-empty { padding: var(--space-200) var(--space-0); }
 .task-empty-title { margin: 0 0 var(--space-50); color: var(--text); text-wrap: balance; }
-.task-empty-body { margin: 0; color: var(--text-subtle); max-width: 44ch; text-wrap: pretty; }
+.task-empty-body { margin: 0; color: var(--subtle); max-width: 44ch; text-wrap: pretty; }
 
-.task-add {
-  display: flex;
-  gap: var(--space-75);
-  padding-top: var(--space-200);
-}
+.task-add { display: flex; gap: var(--space-75); padding-top: var(--space-200); }
 
 #task-input {
   /* A text input carries an intrinsic width of roughly 20 characters. Left
-     alone it sets a min-content floor for the whole column, which pushes the
-     page wider than the viewport on small phones. Zero width plus flex-grow
-     lets it fill the row without imposing that floor. */
+     alone it sets a min-content floor for the whole column. */
   flex: 1 1 0;
   width: 0;
   min-width: 0;
-  padding: var(--space-75) var(--space-100);
-  background: var(--bg);
+  min-height: var(--control-height);
+  padding: var(--space-75) var(--space-200);
+  background: var(--raised);
   color: var(--text);
-  font-family: inherit;
-  border: 1px solid var(--border-firm);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
   transition: border-color var(--dur-color) var(--curve);
 }
-#task-input::placeholder { color: var(--text-subtle); }
-#task-input:hover { border-color: var(--text-subtle); }
-#task-input.has-error { border-color: var(--accent); }
+#task-input::placeholder { color: var(--subtle); }
+#task-input:hover { border-color: var(--control); }
+#task-input.has-error { border-color: var(--negative); }
 
 .task-add-btn {
-  padding: var(--space-75) var(--space-100);
-  background: var(--surface-2);
+  min-height: var(--control-height);
+  padding: var(--space-75) var(--space-200);
+  background: var(--raised);
   color: var(--text);
-  font-family: inherit;
-  border: 1px solid var(--border-firm);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
   cursor: pointer;
   transition: color var(--dur-color) var(--curve),
               background-color var(--dur-color) var(--curve),
               transform var(--dur-layout) var(--curve);
 }
-.task-add-btn:hover { background: var(--text); color: var(--bg); }
+.task-add-btn:hover { background: var(--text); color: var(--ground); border-color: var(--text); }
 .task-add-btn:active { transform: scale(0.98); }
 
-/* B9 — inline, specific, never an alert */
-.task-error {
-  margin: var(--space-75) var(--space-0) var(--space-0);
-  color: var(--accent);
+/* B9 — inline, specific, never an alert. Red is kept for the failing fact. */
+.task-error { margin: var(--space-75) var(--space-0) var(--space-0); color: var(--negative); }
+
+/* ─── Seven day record ─────────────────────────────────────── */
+/* The one white inner card the style allows, used for the main chart */
+.chart-card {
+  padding: var(--space-200);
+  background: var(--raised);
+  border-radius: var(--radius-2xl);
 }
-
-.task-foot {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--space-50) var(--space-200);
-  padding-top: var(--space-200);
-}
-
-.task-summary { color: var(--text-subtle); }
-
-.task-clear {
-  background: none;
-  border: 0;
-  padding: 0;
-  color: var(--text-subtle);
-  font-family: inherit;
-  cursor: pointer;
-  transition: color var(--dur-color) var(--curve);
-}
-.task-clear:hover { color: var(--accent); }
-
-/* ─── Settings ─────────────────────────────────────────────── */
-.set-row {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-200);
-  padding: var(--space-100) var(--space-0);
-}
-.set-row::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1px;
-  background: var(--border);
-}
-.set-row:last-child::after { display: none; }
-
-.set-label { display: flex; flex-direction: column; gap: var(--space-25); min-width: 0; }
-.set-label .name { color: var(--text); text-wrap: pretty; }
-.set-label .sub { color: var(--text-subtle); }
-
-.stepper { display: flex; align-items: center; gap: var(--space-75); flex: none; }
-
-.val { display: flex; align-items: baseline; gap: var(--space-50); }
-
-.step-val {
-  font-family: var(--mono);
-  font-size: var(--text-base);
-  line-height: var(--lh-base);
-  font-weight: var(--w-semibold);
-  font-variant-numeric: tabular-nums;
-}
-
-.unit { color: var(--text-subtle); }
-
-.toggle {
-  position: relative;
-  flex: none;
-  width: var(--space-500);
-  height: var(--space-300);
-  background: var(--surface-2);
-  border: 1px solid var(--border-firm);
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  transition: background-color var(--dur-color) var(--curve),
-              border-color var(--dur-color) var(--curve);
-}
-.toggle::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: var(--space-25);
-  width: var(--space-200);
-  height: var(--space-200);
-  margin-top: calc(-1 * var(--space-75));
-  background: var(--text-subtle);
-  border-radius: var(--radius-full);
-  /* B7 — move the knob with transform, not left */
-  transition: transform var(--dur-layout) var(--curve),
-              background-color var(--dur-color) var(--curve);
-}
-.toggle.is-on { background: var(--text); border-color: var(--text); }
-.toggle.is-on::after { background: var(--bg); transform: translateX(var(--space-200)); }
-
-/* ─── Today ────────────────────────────────────────────────── */
-.stat-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-200);
-  margin-bottom: var(--space-300);
-}
-
-.stat { display: flex; flex-direction: column; gap: var(--space-25); }
-
-.stat-n {
-  font-family: var(--mono);
-  font-size: var(--text-4xl);
-  line-height: var(--lh-4xl);
-  font-weight: var(--w-semibold);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
-}
-.stat-n.accent { color: var(--accent); }
-
-.stat-l { color: var(--text-subtle); text-transform: uppercase; letter-spacing: 0.08em; }
-
-.chart { position: relative; }
 
 .chart-bars {
   position: relative;
-  height: var(--space-700);
+  height: var(--space-900);
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: var(--space-75);
@@ -763,7 +671,7 @@ i, em, cite, address, blockquote { font-style: normal; }
   right: 0;
   bottom: 0;
   height: 1px;
-  background: var(--border-firm);
+  background: var(--border);
 }
 
 .bar-col { height: 100%; display: flex; align-items: flex-end; }
@@ -772,14 +680,15 @@ i, em, cite, address, blockquote { font-style: normal; }
 .bar {
   width: 100%;
   height: 100%;
-  background: var(--border-firm);
-  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  background: var(--chart-3);
+  border-radius: var(--radius) var(--radius) 0 0;
   transform-origin: bottom center;
   transform: scaleY(var(--v, 0));
   transition: transform var(--dur-layout) var(--curve),
               background-color var(--dur-color) var(--curve);
 }
-.bar.today { background: var(--accent); }
+/* The one chart hue marks today, the screen's main data element */
+.bar.today { background: var(--chart-2); }
 
 .chart-days {
   display: grid;
@@ -793,10 +702,75 @@ i, em, cite, address, blockquote { font-style: normal; }
   font-family: var(--mono);
   font-size: var(--text-xs);
   line-height: var(--lh-xs);
-  color: var(--text-subtle);
+  color: var(--subtle);
 }
 
-.chart-label { margin: var(--space-75) 0 0; color: var(--text-subtle); }
+.chart-label { margin: var(--space-75) 0 0; color: var(--subtle); }
+
+/* ─── Settings: full width, splitting at column 6 ──────────── */
+.set-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-75) var(--space-300);
+}
+
+.set-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-200);
+  min-height: var(--row-height);
+  padding: var(--space-75) var(--space-200);
+  background: var(--raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+}
+
+.set-label { display: flex; flex-direction: column; gap: var(--space-25); min-width: 0; }
+.set-label .name { color: var(--text); text-wrap: pretty; }
+.set-label .sub { color: var(--subtle); }
+
+.stepper { display: flex; align-items: center; gap: var(--space-75); flex: none; }
+.val { display: flex; align-items: baseline; gap: var(--space-50); }
+
+.step-val {
+  font-family: var(--mono);
+  font-size: var(--text-base);
+  line-height: var(--lh-base);
+  font-weight: var(--w-regular);
+  font-variant-numeric: tabular-nums;
+}
+
+.unit { color: var(--subtle); }
+
+.toggle {
+  position: relative;
+  flex: none;
+  width: var(--space-500);
+  height: var(--space-300);
+  background: var(--surface);
+  border: 1px solid var(--control);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background-color var(--dur-color) var(--curve),
+              border-color var(--dur-color) var(--curve);
+}
+.toggle::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: var(--space-25);
+  width: var(--space-200);
+  height: var(--space-200);
+  margin-top: calc(-1 * var(--space-75));
+  background: var(--subtle);
+  border-radius: var(--radius-full);
+  /* B7 — move the knob with transform, not left */
+  transition: transform var(--dur-layout) var(--curve),
+              background-color var(--dur-color) var(--curve);
+}
+.toggle.is-on { background: var(--accent); border-color: var(--accent); }
+.toggle.is-on::after { background: var(--on-accent); transform: translateX(var(--space-200)); }
 
 /* ─── B11 tagline reveal ───────────────────────────────────── */
 .tagline {
@@ -805,25 +779,15 @@ i, em, cite, address, blockquote { font-style: normal; }
   justify-content: center;
 }
 
-.tagline-text {
-  margin: 0;
-  max-width: 680px;
-  text-wrap: balance;
-  color: var(--text);
-}
-
-.tagline-text .w {
-  opacity: 0.3;
-  transition: opacity var(--dur-color) var(--curve);
-}
+.tagline-text { margin: 0; max-width: 680px; text-wrap: balance; color: var(--text); }
+.tagline-text .w { opacity: 0.3; transition: opacity var(--dur-color) var(--curve); }
 .tagline-text .w.is-on { opacity: 1; }
-
 .tagline-text .jp { font-family: var(--jp); color: var(--accent); }
 
 /* ─── Footer ───────────────────────────────────────────────── */
 .footer {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--space-300);
   align-items: start;
   padding-top: var(--space-400);
@@ -834,13 +798,9 @@ i, em, cite, address, blockquote { font-style: normal; }
 .quote-text { margin: 0 0 var(--space-75); color: var(--text); text-wrap: pretty; }
 .quote-text::before { content: "“"; }
 .quote-text::after { content: "”"; }
-.quote-author { color: var(--text-subtle); }
+.quote-author { color: var(--subtle); }
 
-.colophon {
-  margin: 0;
-  color: var(--text-subtle);
-  text-wrap: pretty;
-}
+.colophon { margin: 0; color: var(--subtle); text-wrap: pretty; }
 .colophon-kanji { font-family: var(--jp); color: var(--accent); margin-right: var(--space-50); }
 
 /* ─── B7 scroll reveals ────────────────────────────────────── */
@@ -868,66 +828,97 @@ html.reveals-on .reveal.is-visible { opacity: 1; transform: none; }
    Responsive — every size still lands on a scale step
    ============================================================ */
 
-/* Stack to one column */
-@media (max-width: 900px) {
-  .grid, .footer { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 1000px) {
+  .span-9, .span-6 { grid-column: span 12; }
+  /* The session column is too narrow to hold three mode labels once the
+     main panels go full width; it takes the full row and lays them out.
+     Doubled class so it outranks the .span-3 override at 720px. */
+  .panel--session.span-3 { grid-column: span 12; }
   .time { font-size: var(--text-8xl); }
-  .tagline { padding: var(--space-700) var(--space-0) var(--space-600); }
+  .modes { flex-direction: row; }
+  .mode { flex: 1; text-align: center; }
+  .session-meter { flex-direction: row; align-items: center; gap: var(--space-200); }
+  .session-meter .lab { text-wrap: pretty; }
 }
 
-/* Phones */
+@media (max-width: 720px) {
+  .set-grid { grid-template-columns: minmax(0, 1fr); }
+  .footer { grid-template-columns: minmax(0, 1fr); }
+  /* Four tiles across stop reading below this; two by two keeps the
+     captions on one or two lines instead of four. */
+  .span-3 { grid-column: span 6; }
+  .session-meter { flex-direction: column; align-items: flex-start; gap: var(--space-75); }
+}
+
+/* The sheet's phone rules: greeting at 24-28px, tiles in a 2 x 2 grid,
+   panels stacked in reading order. */
 @media (max-width: 560px) {
-  .page { padding: var(--space-400) var(--space-200) var(--space-600); }
-  .masthead { grid-template-columns: auto auto; row-gap: var(--space-200); }
-  .mast-tag { display: none; }
+  .page { padding: var(--space-300) var(--space-200) var(--space-600); }
+  .greeting-head { margin-bottom: var(--space-400); }
+  .greeting-text { font-size: var(--text-2xl); line-height: var(--lh-2xl); }
+  .tile { min-height: var(--space-900); }
   .time { font-size: var(--text-7xl); }
+  .tagline { padding: var(--space-700) var(--space-0) var(--space-600); }
   .tagline-text { font-size: var(--text-3xl); line-height: var(--lh-3xl); }
   .task-est { display: none; }
-  /* Touch targets stay at least 48px without leaving the spacing scale */
   .btn, .task-add-btn, #task-input { min-height: var(--space-600); }
+  /* The tiles already carry the task count; the chip would only repeat it. */
+  #task-summary { display: none; }
+  /* Three mode labels will not sit on one line at this width without
+     breaking "Short break" across two; a column keeps them whole. */
+  .modes { flex-direction: column; }
+  .mode { flex: none; text-align: left; }
 }
 
 @media (max-width: 390px) {
   .time { font-size: var(--text-6xl); }
-  .stat-n { font-size: var(--text-3xl); line-height: var(--lh-3xl); }
-  /* Below this the three mode labels no longer fit on one line each; let them
-     wrap rather than set a min-content floor that overflows the viewport. */
-  .mode { padding: var(--space-75); white-space: normal; }
+  .tile-v { font-size: var(--text-2xl); line-height: var(--lh-2xl); }
+}
+
+/* ── Short windows ─────────────────────────────────────────── */
+/* A stated deviation from the sheet, which asks for panels in reading order:
+   on a short window that order leaves the primary action below the fold, and
+   B10 requires it on the first screen. The same happens on a narrow window,
+   where the four tiles fall into two rows. The timer rises above the tiles
+   only while the window cannot hold both; reading order returns with room. */
+@media (max-height: 700px), (max-width: 720px) {
+  .greeting        { order: 0; margin-bottom: var(--space-300); }
+  .panel--interval { order: 1; }
+  .panel--session  { order: 2; }
+  .tile            { order: 3; }
+  .panel--tasks    { order: 4; }
+  .panel--record   { order: 5; }
+  .panel--settings { order: 6; }
+}
+
+@media (max-height: 700px) {
+  .greeting-text { font-size: var(--text-2xl); line-height: var(--lh-2xl); }
+}
+
+@media (max-height: 560px) {
+  .greeting-date { display: none; }
+  .greeting { margin-bottom: var(--space-200); }
+  .greeting-head { margin-bottom: var(--space-300); }
 }
 
 /* ── Short windows: a quarter tile on a small laptop ───────── */
 @media (min-width: 480px) and (max-height: 620px) {
-  .page { padding-top: var(--space-300); padding-bottom: var(--space-300); }
-  .masthead { margin-bottom: var(--space-200); }
-  .mark { font-size: var(--text-xl); line-height: var(--lh-xl); }
-  .kanji { font-size: var(--text-lg); line-height: var(--lh-lg); }
-  .streak-n { font-size: var(--text-xl); line-height: var(--lh-xl); }
-  .card { padding: var(--space-200); }
-  .card-head { margin-bottom: var(--space-200); }
-  .modes { margin-bottom: var(--space-200); }
+  .page { padding-top: var(--space-200); padding-bottom: var(--space-300); }
+  .greeting-head { margin-bottom: var(--space-300); }
+  .greeting { margin-bottom: var(--space-200); }
+  .greeting-text { font-size: var(--text-2xl); line-height: var(--lh-2xl); }
+  .panel, .tile { padding: var(--space-200); }
+  .tile { min-height: var(--space-800); }
+  .panel-head { margin-bottom: var(--space-200); }
   .time { font-size: var(--text-6xl); margin-bottom: var(--space-200); }
-  .meta-row { margin-bottom: var(--space-200); }
-  .set-row { padding: var(--space-75) var(--space-0); }
-  .task { padding: var(--space-75) var(--space-0); }
-  .stat-n { font-size: var(--text-3xl); line-height: var(--lh-3xl); }
-  .stat-grid { margin-bottom: var(--space-200); }
-  .chart-bars { height: var(--space-600); }
+  .phase { margin-bottom: var(--space-200); }
+  .chart-bars { height: var(--space-700); }
   .tagline { padding: var(--space-500) var(--space-0) var(--space-400); }
   .tagline-text { font-size: var(--text-2xl); line-height: var(--lh-2xl); }
   .footer { padding-top: var(--space-300); }
 }
 
 @media (min-width: 480px) and (max-height: 430px) {
-  .page { padding-top: var(--space-200); }
-  .mast-tag { display: none; }
   .time { font-size: var(--text-5xl); margin-bottom: var(--space-100); }
-  .card { padding: var(--space-200); }
-  .card-head { margin-bottom: var(--space-100); }
-  .modes { margin-bottom: var(--space-100); }
-  .meta-row { margin-bottom: var(--space-200); }
-}
-
-/* Short but wide: keep two columns rather than falling to the phone stack */
-@media (min-width: 600px) and (max-height: 620px) {
-  .grid, .footer { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
+  .tile { min-height: var(--space-700); }
 }
