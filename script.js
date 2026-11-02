@@ -5,9 +5,9 @@
 const STORE = 'ma_timer_v1';
 
 const MODES = {
-  focus: { label: 'Focus',       phrase: 'one breath of work', tint: '#e2231a' },
-  short: { label: 'Short Break', phrase: 'rest, lightly',      tint: '#111110' },
-  long:  { label: 'Long Break',  phrase: 'step away',          tint: '#111110' },
+  focus: { label: 'Focus',       phrase: 'one breath of work', tint: 'var(--accent)' },
+  short: { label: 'Short break', phrase: 'rest, lightly',      tint: 'var(--text-muted)' },
+  long:  { label: 'Long break',  phrase: 'step away',          tint: 'var(--text-muted)' },
 };
 
 const DEFAULTS = {
@@ -129,6 +129,9 @@ const quoteAuthor  = document.getElementById('quote-author');
 const taskList     = document.getElementById('task-list');
 const taskEmpty    = document.getElementById('task-empty');
 const taskForm     = document.getElementById('task-form');
+const taskError    = document.getElementById('task-error');
+const toggleLabel  = document.getElementById('toggle-label');
+const themeBtn     = document.getElementById('theme-btn');
 const taskInput    = document.getElementById('task-input');
 const taskSummary  = document.getElementById('task-summary');
 const taskClear    = document.getElementById('task-clear');
@@ -157,17 +160,17 @@ function renderTasks() {
 
   taskList.innerHTML = tasks.map(t => `
     <li class="task${t.done ? ' done' : ''}${t.id === state.activeTask && !t.done ? ' is-active' : ''}" data-id="${t.id}">
-      <button class="task-check" data-act="toggle"
+      <button class="task-check" type="button" data-act="toggle"
         aria-label="${t.done ? 'Mark as not done' : 'Mark as done'}"
-        aria-pressed="${t.done}"></button>
+        aria-pressed="${t.done}"><svg class="icon" aria-hidden="true"><use href="#i-check" /></svg></button>
       <button class="task-text" data-act="select"
         aria-label="Focus on this task">${escapeHTML(t.text)}</button>
       <span class="task-count" title="pomodoros done / estimated">${t.count}/${t.est}</span>
       <span class="task-est">
-        <button data-act="est-dec" aria-label="Decrease estimate">−</button>
-        <button data-act="est-inc" aria-label="Increase estimate">+</button>
+        <button type="button" data-act="est-dec" aria-label="Decrease estimate"><svg class="icon" aria-hidden="true"><use href="#i-minus" /></svg></button>
+        <button type="button" data-act="est-inc" aria-label="Increase estimate"><svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg></button>
       </span>
-      <button class="task-del" data-act="delete" aria-label="Delete task">×</button>
+      <button class="task-del" type="button" data-act="delete" aria-label="Delete task"><svg class="icon" aria-hidden="true"><use href="#i-trash" /></svg></button>
     </li>`).join('');
 
   const doneCount = tasks.filter(t => t.done).length;
@@ -207,8 +210,8 @@ function render() {
   ).join('');
   timerDisplay.classList.toggle('running', !!tickInterval);
 
-  // Hairline progress bar
-  progressFill.style.width = (progress * 100) + '%';
+  // Hairline progress bar — scaleX so only transform animates (B7)
+  progressFill.style.transform = `scaleX(${progress})`;
   progressFill.style.backgroundColor = M.tint;
 
   // Phase line — name the task being worked on during focus
@@ -221,14 +224,11 @@ function render() {
 
   // Toggle button
   if (running) {
-    toggleBtn.textContent = 'Pause';
-    toggleBtn.setAttribute('aria-label', 'Pause timer');
+    setToggleBtn('#i-pause', 'Pause', 'Pause timer');
   } else if (remaining < total && remaining > 0) {
-    toggleBtn.textContent = 'Resume';
-    toggleBtn.setAttribute('aria-label', 'Resume timer');
+    setToggleBtn('#i-play', 'Resume', 'Resume timer');
   } else {
-    toggleBtn.textContent = 'Begin';
-    toggleBtn.setAttribute('aria-label', 'Begin timer');
+    setToggleBtn('#i-play', 'Begin', 'Begin timer');
   }
 
   // Mode tabs
@@ -243,6 +243,7 @@ function render() {
     const cur  = i === sessionPos && mode === 'focus';
     return `<div class="dot${done ? ' done' : ''}${cur ? ' current' : ''}"></div>`;
   }).join('');
+  sessionDots.classList.toggle('running', running);
   const sessionNum = sessionPos + (mode === 'focus' ? 1 : 0);
   sessionLabel.textContent = `session ${sessionNum} of ${interval} · long break after ${interval}`;
 
@@ -268,7 +269,7 @@ function render() {
   chartEl.innerHTML =
     `<div class="chart-bars">${days.map(d =>
       `<div class="bar-col"><div class="bar${d.today ? ' today' : ''}" ` +
-      `style="height:${Math.max(2, (d.n / maxN) * 72)}px"></div></div>`
+      `style="--v:${Math.max(0.03, d.n / maxN).toFixed(3)}"></div></div>`
     ).join('')}</div>` +
     `<div class="chart-days">${days.map(d =>
       `<span class="day">${d.label}</span>`
@@ -416,7 +417,7 @@ function chime(ascending) {
 function showNextQuote() {
   if (quoteIndex >= quotes.length) quoteIndex = 0;
   const { quote, author } = quotes[quoteIndex++];
-  quoteText.textContent   = `"${quote}"`;
+  quoteText.textContent   = quote; // .quote-text::before/::after add the marks
   quoteAuthor.textContent = `— ${author}`;
 }
 
@@ -460,7 +461,17 @@ document.querySelectorAll('.toggle').forEach(toggle => {
 taskForm.addEventListener('submit', e => {
   e.preventDefault();
   const text = taskInput.value.trim();
-  if (!text) return;
+
+  if (!text) {
+    showTaskError('Type the task before adding it.');
+    return;
+  }
+  if (state.tasks.some(t => !t.done && t.text.toLowerCase() === text.toLowerCase())) {
+    showTaskError('That task is already on the list below.');
+    return;
+  }
+  clearTaskError();
+
   state.tasks.push({
     id: `t${Date.now()}${Math.floor(Math.random() * 1000)}`,
     text, done: false, est: 1, count: 0,
@@ -509,9 +520,133 @@ taskClear.addEventListener('click', () => {
   render();
 });
 
+// ─── B9 inline form errors ────────────────────────────────────
+function showTaskError(message) {
+  taskError.textContent = message;
+  taskError.hidden = false;
+  taskInput.classList.add('has-error');
+  taskInput.focus();
+}
+
+function clearTaskError() {
+  taskError.textContent = '';
+  taskError.hidden = true;
+  taskInput.classList.remove('has-error');
+}
+
+taskInput.addEventListener('input', () => {
+  if (!taskError.hidden) clearTaskError();
+});
+
+// ─── Primary button: swap icon and label together ─────────────
+function setToggleBtn(iconId, label, ariaLabel) {
+  toggleBtn.querySelector('use').setAttribute('href', iconId);
+  toggleLabel.textContent = label;
+  toggleBtn.setAttribute('aria-label', ariaLabel);
+}
+
+// ─── Theme ────────────────────────────────────────────────────
+const THEME_KEY = 'ma_theme_v1';
+
+function prefersDark() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+/** True when the page is currently rendering the dark palette. */
+function isDark() {
+  const set = document.documentElement.getAttribute('data-theme');
+  return set ? set === 'dark' : prefersDark();
+}
+
+function syncThemeButton() {
+  const dark = isDark();
+  themeBtn.querySelector('use').setAttribute('href', dark ? '#i-sun' : '#i-moon');
+  themeBtn.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+}
+
+themeBtn.addEventListener('click', () => {
+  const next = isDark() ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem(THEME_KEY, next); } catch (e) { /* private mode */ }
+  syncThemeButton();
+});
+
+// Follow the OS while the user has not chosen for themselves
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+  if (!document.documentElement.hasAttribute('data-theme')) syncThemeButton();
+});
+
+syncThemeButton();
+
+// ─── B7 scroll reveals ────────────────────────────────────────
+/**
+ * Sections rise 32px and fade in once as they enter the viewport. The hidden
+ * state lives behind `.reveals-on`, added here, so a page whose script never
+ * runs still shows everything.
+ */
+function armReveals() {
+  const items = document.querySelectorAll('.reveal');
+  if (!items.length || !('IntersectionObserver' in window)) return;
+
+  document.documentElement.classList.add('reveals-on');
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      io.unobserve(entry.target); // reveal once, never replay
+    });
+    /* The bottom margin is positive on purpose: a negative one would shrink the
+       root above anything sitting in the last stretch of the document — the
+       footer quote never reaches it at maximum scroll and stays hidden. */
+  }, { rootMargin: '0px 0px 5% 0px', threshold: 0 });
+
+  items.forEach(el => io.observe(el));
+}
+
+// ─── B11 tagline reveal, word by word ────────────────────────
+/**
+ * Each word carries its own observer and lights up as it crosses a trigger
+ * line at 75% of the viewport height, with a short stagger so words on one
+ * line still arrive in reading order rather than together. The line has to sit
+ * low enough that the last line of the block can actually climb above it at the
+ * document's maximum scroll, or those words would stay muted for good.
+ */
+function armTagline() {
+  const el = document.getElementById('tagline-text');
+  if (!el) return;
+
+  const words = el.textContent.trim().split(/\s+/);
+  el.innerHTML = words.map((word, i) => {
+    const jp = /[\u3000-\u9FFF]/.test(word) ? ' jp' : '';
+    const delay = Math.min(i * 40, 600);
+    return `<span class="w${jp}" style="transition-delay:${delay}ms">${escapeHTML(word)}</span>`;
+  }).join(' ');
+
+  const spans = el.querySelectorAll('.w');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (reduced || !('IntersectionObserver' in window)) {
+    spans.forEach(s => s.classList.add('is-on'));
+    return;
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-on');
+      io.unobserve(entry.target);
+    });
+  }, { rootMargin: '0px 0px -25% 0px', threshold: 0 });
+
+  spans.forEach(s => io.observe(s));
+}
+
 // ─── Init ─────────────────────────────────────────────────────
 setInterval(showNextQuote, 180 * 1000);
 showNextQuote();
 ensureActiveTask();
 renderTasks();
 render();
+armReveals();
+armTagline();
